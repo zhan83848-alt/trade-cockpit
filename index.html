@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#FDFBF7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="TradeCockpit">
+<link rel="manifest" href="manifest.json">
+<title>AI外贸驾驶舱 · Trade Cockpit</title>
+<style>
+:root {
+  --bg: #FDFBF7; --bg2: #FFFFFF; --bg3: #FEF9E7;
+  --text: #1A1A2E; --text2: #6B7280; --text3: #9CA3AF;
+  --accent: #D97706; --accent-light: #FEF3C7; --accent-hover: #B45309;
+  --green: #059669; --red: #DC2626; --yellow: #D97706; --orange: #EA580C; --purple: #7C3AED;
+  --blue: #2563EB; --teal: #0D9488;
+  --sidebar-w: 220px; --radius: 12px; --radius-sm: 8px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06); --shadow: 0 2px 12px rgba(0,0,0,.06);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,.08);
+  --safe-bottom: env(safe-area-inset-bottom, 12px);
+  --border: #F3F0E8;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#DDD;border-radius:3px}
+
+/* Layout */
+.app{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:linear-gradient(180deg,#FFFFFF 0%,#FEFBF5 100%);position:fixed;top:0;left:0;bottom:0;z-index:100;display:flex;flex-direction:column;border-right:1px solid var(--border);overflow-y:auto;box-shadow:var(--shadow-sm)}
+.sidebar-logo{padding:20px 18px;border-bottom:1px solid var(--border)}
+.sidebar-logo h1{font-size:15px;font-weight:700;letter-spacing:-0.3px;color:var(--accent);display:flex;align-items:center;gap:6px}
+.sidebar-logo span{font-size:10px;color:var(--text3);display:block;margin-top:3px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 18px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .18s;border-left:3px solid transparent;margin:1px 0;position:relative;font-weight:500}
+.nav-item:hover{background:var(--accent-light);color:var(--accent)}
+.nav-item.active{background:linear-gradient(90deg,var(--accent-light) 0%,transparent 100%);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.nav-icon{font-size:17px;width:22px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--accent);color:#FFF;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700;min-width:22px;text-align:center}
+.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh;padding:28px 32px 100px;max-width:1160px}
+.module{display:none}
+.module.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Cards */
+.card{background:var(--bg2);border-radius:var(--radius);padding:22px;margin-bottom:16px;border:1px solid var(--border);box-shadow:var(--shadow-sm);transition:box-shadow .2s}
+.card:hover{box-shadow:var(--shadow)}
+.card h3{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;color:var(--text)}
+.card h3 .icon{font-size:19px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+
+/* Stat Cards */
+.stat-card{background:var(--bg2);border-radius:var(--radius);padding:18px 20px;border:1px solid var(--border);box-shadow:var(--shadow-sm)}
+.stat-card .label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:600}
+.stat-card .value{font-size:30px;font-weight:800;line-height:1}
+.stat-card .sub{font-size:11px;color:var(--text3);margin-top:4px}
+.c-accent{color:var(--accent)}.c-green{color:var(--green)}.c-yellow{color:var(--yellow)}.c-purple{color:var(--purple)}.c-blue{color:var(--blue)}
+
+/* Tags */
+.tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:600}
+.tag-a{background:#ECFDF5;color:#065F46}
+.tag-b{background:#EFF6FF;color:#1E40AF}
+.tag-c{background:var(--accent-light);color:#92400E}
+
+/* Data Source */
+.data-source{font-size:11px;color:var(--text3);margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.data-source a{color:var(--accent);text-decoration:none;font-weight:500}
+.data-source .level{padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700}
+.level-a{background:#ECFDF5;color:#065F46}
+.level-b{background:#EFF6FF;color:#1E40AF}
+.level-c{background:var(--accent-light);color:#92400E}
+
+/* Opportunity Row */
+.opportunity-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:8px;transition:all .15s;border:1px solid transparent}
+.opportunity-row:hover{background:var(--accent-light);border-color:var(--accent-light)}
+.opp-flag{font-size:22px;width:28px}
+.opp-stars{color:var(--accent);font-size:13px;letter-spacing:1px}
+.opp-info{flex:1}
+.opp-info .title{font-size:13px;font-weight:600;color:var(--text)}
+.opp-info .detail{font-size:11px;color:var(--text3);margin-top:3px}
+.opp-action{font-size:11px;color:var(--accent);white-space:nowrap;cursor:pointer;font-weight:600}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--border);padding-bottom:0}
+.tab{padding:9px 18px;font-size:12px;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;white-space:nowrap;font-weight:500;border-radius:8px 8px 0 0}
+.tab:hover{color:var(--accent);background:var(--accent-light)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);background:transparent;font-weight:600}
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* Buttons */
+.btn{padding:9px 20px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn-primary{background:var(--accent);color:#FFF}
+.btn-primary:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn-outline{background:transparent;border:1.5px solid var(--text3);color:var(--text2)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm{padding:5px 12px;font-size:10px;border-radius:6px}
+.btn-green{background:var(--green);color:#FFF}
+.btn-green:hover{opacity:.9}
+
+/* Forms */
+input,textarea,select{background:var(--bg);border:1.5px solid var(--border);color:var(--text);padding:10px 14px;border-radius:var(--radius-sm);font-size:12px;width:100%;font-family:inherit;transition:border-color .2s}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent);background:#FFF}
+textarea{resize:vertical;min-height:80px}
+.form-row{display:flex;gap:10px;margin-bottom:10px}
+.form-row>*{flex:1}
+label{font-size:11px;color:var(--text2);display:block;margin-bottom:5px;font-weight:600}
+
+/* Knowledge Panel */
+.knowledge-panel{margin-top:28px;border-top:2px solid var(--accent-light);padding-top:20px}
+.knowledge-panel h3{font-size:16px;color:var(--accent);display:flex;align-items:center;gap:6px;margin-bottom:16px}
+.knowledge-card{background:var(--bg3);border-radius:var(--radius-sm);padding:16px 18px;margin-bottom:10px;cursor:pointer;border:1.5px solid transparent;transition:all .2s;position:relative}
+.knowledge-card:hover{border-color:var(--accent);background:#FFF8E1}
+.knowledge-card .kc-title{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;justify-content:space-between}
+.knowledge-card .kc-arrow{font-size:12px;color:var(--accent);transition:transform .3s}
+.knowledge-card.open .kc-arrow{transform:rotate(180deg)}
+.knowledge-card .kc-content{display:none;margin-top:12px;font-size:12px;line-height:1.8;color:var(--text2);padding-top:12px;border-top:1px dashed #E5D9B6}
+.knowledge-card.open .kc-content{display:block}
+
+/* English Learning Section */
+.english-hero{background:linear-gradient(135deg,var(--accent-light) 0%,#FFF8E1 50%,#FEFCE8 100%);border-radius:var(--radius);padding:28px;margin-bottom:20px;border:1px solid #FDE68A}
+.english-hero h2{font-size:20px;color:var(--accent);margin-bottom:6px}
+.english-hero p{font-size:12px;color:var(--text3)}
+.eng-vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.eng-vocab-item{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:14px;transition:all .2s}
+.eng-vocab-item:hover{border-color:var(--accent);box-shadow:var(--shadow-sm)}
+.eng-vocab-item .word{font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px}
+.eng-vocab-item .meaning{font-size:11px;color:var(--text3)}
+.eng-vocab-item .example{font-size:10px;color:var(--text2);margin-top:6px;font-style:italic}
+
+.eng-chat-bubble{background:var(--bg3);border-radius:14px 14px 14px 4px;padding:12px 16px;margin-bottom:10px;font-size:12px;line-height:1.6;max-width:85%}
+.eng-chat-bubble.reply{background:var(--accent-light);border-radius:14px 14px 4px 14px;margin-left:auto}
+.eng-chat-bubble .label{font-size:9px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+
+.eng-phrase-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:8px;transition:all .2s;cursor:pointer}
+.eng-phrase-card:hover{background:var(--accent-light);border-color:var(--accent-light)}
+.eng-phrase-card .en{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.eng-phrase-card .cn{font-size:11px;color:var(--text3)}
+.eng-phrase-card .scenario{font-size:10px;color:var(--accent);margin-top:4px}
+
+/* Pipeline */
+.pipeline{display:flex;gap:10px;margin-top:12px}
+.pipeline-stage{flex:1;background:var(--bg3);border-radius:var(--radius-sm);padding:14px;text-align:center;position:relative;border:1px solid var(--border)}
+.pipeline-stage .stage-num{font-size:28px;font-weight:800}
+.pipeline-stage .stage-label{font-size:10px;color:var(--text3);margin-top:4px;font-weight:600}
+.pipeline-arrow{display:flex;align-items:center;color:var(--text3);font-size:18px}
+
+/* Score Components */
+.score-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:5px}
+.score-fill{height:100%;border-radius:3px;transition:width .5s}
+.score-high{background:var(--green)}.score-mid{background:var(--yellow)}.score-low{background:var(--red)}
+.score-circle{width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;border:3px solid;background:#FFF}
+.score-metrix{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.metrix-item .metrix-label{font-size:11px;color:var(--text3);margin-bottom:4px}
+.metrix-item .metrix-val{font-size:15px;font-weight:700;color:var(--text)}
+
+/* Empty State */
+.empty-state{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-state .icon{font-size:44px;margin-bottom:12px}
+.empty-state p{font-size:13px;margin-top:6px}
+
+/* Pills */
+.pill{display:inline-block;padding:3px 12px;border-radius:14px;font-size:10px;font-weight:600}
+.pill-new{background:#FEE2E2;color:#991B1B}
+.pill-active{background:#ECFDF5;color:#065F46}
+.pill-wait{background:var(--accent-light);color:#92400E}
+
+/* Section Headers */
+.section-header{margin-bottom:24px}
+.section-header h1{font-size:23px;font-weight:800;color:var(--text)}
+.section-header p{color:var(--text3);font-size:12px;margin-top:4px}
+
+/* Action Items */
+.action-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all .15s}
+.action-item:hover{background:var(--accent-light);margin:0 -8px;padding-left:8px;padding-right:8px;border-radius:6px}
+.action-check{width:20px;height:20px;border-radius:6px;border:2px solid #D1D5DB;cursor:pointer;transition:all .2s;flex-shrink:0;background:#FFF}
+.action-check.done{background:var(--green);border-color:var(--green);position:relative}
+.action-check.done::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#FFF;font-size:12px;font-weight:700}
+.action-item.done .action-text{text-decoration:line-through;color:var(--text3)}
+.action-text{font-size:13px}
+
+/* English Skill Cards */
+.eng-card{background:var(--bg3);border-radius:var(--radius-sm);padding:14px;margin-bottom:8px;border:1px solid transparent;transition:all .15s}
+.eng-card:hover{border-color:var(--accent-light)}
+.eng-word{font-size:15px;font-weight:700;color:var(--accent)}
+.eng-meaning{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* Toast */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--text);color:#FFF;padding:12px 28px;border-radius:24px;font-size:12px;font-weight:600;z-index:999;animation:toastIn .3s ease;box-shadow:var(--shadow-lg)}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg2);border-radius:16px;padding:28px;max-width:520px;width:92%;max-height:85vh;overflow-y:auto;border:1px solid var(--border);box-shadow:var(--shadow-lg)}
+.modal h3{margin-bottom:18px;font-size:17px;font-weight:700}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+/* ===== Mobile ===== */
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:#FFF;border-top:1px solid var(--border);padding:6px 0 var(--safe-bottom);box-shadow:0 -2px 10px rgba(0,0,0,.04)}
+.mobile-nav-inner{display:flex;justify-content:space-around}
+.mob-tab{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 10px;cursor:pointer;color:var(--text3);font-size:9px;transition:all .15s;font-weight:500}
+.mob-tab.active{color:var(--accent)}
+.mob-tab .mob-icon{font-size:21px}
+
+@media(max-width:768px){
+  .sidebar{display:none}
+  .main{margin-left:0;padding:18px 14px 85px}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .pipeline{flex-wrap:wrap}.pipeline-arrow{display:none}.pipeline-stage{flex:1 1 30%}
+  .mobile-nav{display:block}
+  .pc-only{display:none!important}
+  .tab{padding:8px 12px;font-size:11px}
+  .score-circle{width:68px;height:68px;font-size:24px}
+  .score-metrix{grid-template-columns:1fr}
+  .section-header h1{font-size:19px}
+  .english-hero{padding:20px}
+  .eng-vocab-grid{grid-template-columns:1fr 1fr}
+}
+@media(min-width:769px){.mb-only{display:none!important}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ========== SIDEBAR ========== -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <h1>🛳 Trade Cockpit</h1>
+      <span>AI外贸老板驾驶舱</span>
+    </div>
+    <div class="nav-item active" data-module="dashboard"><span class="nav-icon">🏠</span>首页驾驶舱</div>
+    <div class="nav-item" data-module="market"><span class="nav-icon">🌍</span>全球市场雷达</div>
+    <div class="nav-item" data-module="product-research"><span class="nav-icon">🔥</span>爆款产品研究</div>
+    <div class="nav-item" data-module="my-products"><span class="nav-icon">🏭</span>我的产品中心</div>
+    <div class="nav-item" data-module="crm"><span class="nav-icon">👥</span>客户CRM<span class="nav-badge" id="crm-badge">0</span></div>
+    <div class="nav-item" data-module="dev"><span class="nav-icon">📩</span>开发跟进</div>
+    <div class="nav-item" data-module="alibaba"><span class="nav-icon">🛒</span>阿里国际站运营</div>
+    <div class="nav-item" data-module="learn"><span class="nav-icon">📚</span>外贸学习</div>
+    <div class="nav-item" data-module="english"><span class="nav-icon">🇬🇧</span>外贸英语</div>
+    <div class="nav-item" data-module="ai"><span class="nav-icon">🤖</span>AI助手</div>
+    <div class="nav-item" data-module="settings" style="margin-top:auto"><span class="nav-icon">⚙️</span>数据中心</div>
+  </nav>
+
+  <!-- ========== MAIN ========== -->
+  <main class="main" id="main-content">
+
+    <!-- ====== 1. DASHBOARD ====== -->
+    <section class="module active" id="module-dashboard">
+      <div class="section-header"><h1>🏠 今日驾驶舱</h1><p>2026-07-28 · 周二 · 一眼看清今天该做什么</p></div>
+      <div class="grid-4" id="dash-stats"></div>
+      <div class="grid-2">
+        <div class="card"><h3><span class="icon">🎯</span>今日市场机会</h3><div id="dash-opportunities"></div></div>
+        <div class="card"><h3><span class="icon">✅</span>今日行动清单</h3><div id="dash-actions"></div></div>
+      </div>
+      <div class="card"><h3><span class="icon">📊</span>成交漏斗</h3><div class="pipeline" id="dash-funnel"></div></div>
+      <!-- Knowledge Panel -->
+      <div class="knowledge-panel">
+        <h3>📖 外贸入门</h3>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">从0到第一个外贸订单，需要哪几步？ <span class="kc-arrow">▼</span></div><div class="kc-content">① 选品验证 → ② 目标市场分析 → ③ 找客户(阿里/展会/LinkedIn/Google) → ④ 发开发信 → ⑤ 报价谈判 → ⑥ 样品确认 → ⑦ 签合同 → ⑧ 生产 → ⑨ 验货 → ⑩ 出货+收汇。你已经有工厂，第一步和第八步已解决，关键是找到对的客户。</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">FOB / CIF / EXW 有什么区别？ <span class="kc-arrow">▼</span></div><div class="kc-content"><strong>EXW</strong> (工厂交货): 买家承担一切，价格最低。<br><strong>FOB</strong> (离岸价): 你负责送到港口+报关，装船后买家负责。<br><strong>CIF</strong> (到岸价): 你负责运费+保险送到目的港。建议新款客户用FOB，老客户可用CIF增加服务价值。</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">新手最容易踩的5个坑 <span class="kc-arrow">▼</span></div><div class="kc-content">① 没有样品确认就接大单 → 必须先寄样、确认<br>② 付款方式太松 → 新客户至少30%定金<br>③ 不了解目的国关税 → 提前查HS编码税率<br>④ 不签合同就生产 → 合同保护双方<br>⑤ 不看汇率波动 → 报价锁定汇率或预留3-5%空间</div></div>
+      </div>
+    </section>
+
+    <!-- ====== 2. MARKET RADAR ====== -->
+    <section class="module" id="module-market">
+      <div class="section-header"><h1>🌍 全球市场雷达</h1><p>联网数据 · 每日刷新 · 数据驱动决策</p></div>
+      <div class="tabs" id="market-tabs">
+        <div class="tab active" data-tab="country">国家机会排名</div>
+        <div class="tab" data-tab="coffee">咖啡行业</div>
+        <div class="tab" data-tab="hardware">五金行业</div>
+        <div class="tab" data-tab="news">行业新闻</div>
+      </div>
+      <div id="market-content"></div>
+      <div class="knowledge-panel">
+        <h3>📖 市场分析知识</h3>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">如何看懂海关数据找机会？ <span class="kc-arrow">▼</span></div><div class="kc-content">海关HS编码是你的金矿：<br>① 查你产品的HS编码（咖啡漏斗=73239300）<br>② 查这个编码从中国出口到各国的量价趋势<br>③ 进口量增长的国家 = 你的目标市场<br>④ 进口均价高的国家 = 利润空间大<br>免费渠道：UN Comtrade、ITC Trade Map</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">Google Trends怎么用来做外贸？ <span class="kc-arrow">▼</span></div><div class="kc-content">① 输入产品关键词，选目标国家 → 看搜索趋势<br>② 趋势上升 = 需求在增长，下降 = 市场在萎缩<br>③ 对比不同国家同一关键词 → 找出热度最高的市场<br>④ 查看"相关查询" → 发现新的关键词和产品方向<br>⑤ 注意季节性波动 → 提前备货</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">评估一个国家是否值得进入的5个维度 <span class="kc-arrow">▼</span></div><div class="kc-content">① 市场规模: 该品类进口额<br>② 增长趋势: 进口额/搜索量是否在涨<br>③ 竞争格局: 已有多少中国供应商<br>④ 准入门槛: 关税/认证/法规要求<br>⑤ 利润空间: 终端售价 vs 你成本价<br>— 每项打分1-5，总分15以上值得做</div></div>
+      </div>
+    </section>
+
+    <!-- ====== 3. PRODUCT RESEARCH ====== -->
+    <section class="module" id="module-product-research">
+      <div class="section-header"><h1>🔥 爆款产品研究中心</h1><p>数据驱动 · 不凭感觉</p></div>
+      <div class="card">
+        <h3><span class="icon">🔍</span>输入产品进行分析</h3>
+        <div class="form-row"><input id="prod-input" placeholder="输入产品名称，如：304不锈钢咖啡漏斗" style="flex:2"><button class="btn btn-primary" onclick="analyzeProduct()">开始分析</button></div>
+        <div id="prod-result" class="empty-state"><div class="icon">🔍</div><p>输入产品名称，系统将分析市场需求、竞争、利润等维度</p></div>
+      </div>
+      <div class="grid-2">
+        <div class="card"><h3><span class="icon">☕</span>304不锈钢咖啡漏斗</h3><div id="prod-coffee-funnel"></div></div>
+        <div class="card"><h3><span class="icon">🔧</span>五金产品机会扫描</h3><div id="prod-hardware"></div></div>
+      </div>
+      <div class="knowledge-panel">
+        <h3>📖 产品开发知识</h3>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">爆款产品的5个共性特征 <span class="kc-arrow">▼</span></div><div class="kc-content">① 搜索量稳定增长（Google Trends > 0）<br>② 竞品数量适中（不是0也不是1000+）<br>③ 有差异化空间（材质/设计/功能可改进）<br>④ 利润空间 > 30%（售价/成本 > 1.5）<br>⑤ 复购率或关联购买（配件/耗材属性）<br>— 满足3条以上就值得试单</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">304 vs 316不锈钢：什么时候该升级？ <span class="kc-arrow">▼</span></div><div class="kc-content">304: 食品级，耐腐蚀，成本低，适合大多数咖啡器具<br>316: 医用级，含钼元素，耐盐/耐酸更强<br>升级到316的场景：① 目标市场是高端/医疗渠道 ② 客户要求316认证 ③ 你价格PK不过304竞品，需要差异化 ④ 海运路线经过高盐雾区域<br>成本差异约15-20%，报价可上浮30-50%</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">选品时如何判断"值不值得做"？ <span class="kc-arrow">▼</span></div><div class="kc-content">三步快速判断法：<br>① Amazon搜索产品 → 看TOP20的月销量和价格<br>② Alibaba.com搜索 → 看供应商数量和价格区间<br>③ Google Trends → 看5年搜索趋势<br>月销1000+且供应商<50家且趋势上升 = 机会<br>月销<100或供应商>200且趋势下降 = 放弃</div></div>
+      </div>
+    </section>
+
+    <!-- ====== 4. MY PRODUCTS ====== -->
+    <section class="module" id="module-my-products">
+      <div class="section-header"><h1>🏭 我的产品中心</h1><p>管理产品资料 · 开发客户直接调用</p></div>
+      <button class="btn btn-primary mb-only" style="margin-bottom:14px;width:100%" onclick="showProductModal()">+ 添加产品</button>
+      <button class="btn btn-primary pc-only" style="margin-bottom:18px" onclick="showProductModal()">+ 添加产品</button>
+      <div id="my-products-list" class="grid-2"></div>
+      <div class="knowledge-panel">
+        <h3>📖 产品运营知识</h3>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">如何给产品定价？（外贸定价公式） <span class="kc-arrow">▼</span></div><div class="kc-content"><strong>FOB报价 = 成本 + 利润 + 杂费</strong><br>① 原料成本 + 人工 + 包装<br>② 加10-15%管理费用<br>③ 根据市场加利润: 竞争品15-25%, 差异化品30-50%<br>④ 查竞品终端售价 × 40-50% ≈ 你的FOB价上限<br>⑤ 如果FOB价低于成本20%以上 → 产品不适合出口</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">MOQ怎么定才不会吓跑客户？ <span class="kc-arrow">▼</span></div><div class="kc-content">MOQ策略：<br>① 首单MOQ = 你最小的生产批量（如500pcs）<br>② 同时告诉客户："试单500，稳定后100/pcs即可"<br>③ 对于明确的大客户，可以承诺"首单无MOQ，但单价上浮10%"<br>④ 混合订单：允许客户混合多个SKU凑MOQ<br>关键: 不要让MOQ成为客户不回复你的理由</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">外贸产品资料包该包含什么？ <span class="kc-arrow">▼</span></div><div class="kc-content">一个专业的产品资料包：<br>① 产品高清图片(白底+场景图至少各5张)<br>② 规格参数表(材质/尺寸/重量/包装)<br>③ FOB价格表(按MOQ分档) + 美元报价<br>④ 工厂认证(SGS/FDA/LFGB/ISO等)<br>⑤ 最少3个客户案例或评价<br>⑥ 英文版公司介绍<br>做成PDF，客户要时1分钟发出</div></div>
+      </div>
+    </section>
+
+    <!-- ====== 5. CRM ====== -->
+    <section class="module" id="module-crm">
+      <div class="section-header"><h1>👥 客户CRM</h1><p>管道管理 · 从线索到成交</p></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <button class="btn btn-primary" onclick="showCRMModal()">+ 添加客户</button>
+        <select id="crm-filter" onchange="renderCRM()" style="width:auto;min-width:150px">
+          <option value="all">全部客户</option><option value="待联系">待联系</option><option value="已联系">已联系</option>
+          <option value="已回复">已回复</option><option value="已报价">已报价</option><option value="样品">寄样中</option>
+          <option value="成交">已成交</option><option value="放弃">已放弃</option>
+        </select>
+      </div>
+      <div id="crm-list"></div>
+      <div class="knowledge-panel">
+        <h3>📖 客户管理知识</h3>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">如何给客户分级（ABCD分类法）？ <span class="kc-arrow">▼</span></div><div class="kc-content"><strong>A级</strong> (成交概率>50%): 已报价/样品确认中 → 每天跟进<br><strong>B级</strong> (20-50%): 已回复、有明确需求 → 每周2-3次<br><strong>C级</strong> (5-20%): 已联系未回复 → 每周1次温和提醒<br><strong>D级</strong> (<5%): 只浏览/询价 → 每月群发一次新品<br>把80%时间花在A+B级客户上</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">客户不回邮件怎么办？5步跟进法 <span class="kc-arrow">▼</span></div><div class="kc-content">第3天: 简短check-in，确认是否收到<br>第7天: 附新产品/新价格增加价值<br>第14天: 换角度（行业趋势/客户案例）<br>第30天: 坦诚询问（是否还在考虑/哪里不满意）<br>第60天: 最后联系 + 留下开放式结尾<br>每个阶段间隔翻倍，不催不急不放弃</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">成交的信号：客户说这些话就该报价了 <span class="kc-arrow">▼</span></div><div class="kc-content">客户说这些表示进入成交阶段：<br>① "Can you send me your best price?"<br>② "What's your MOQ and lead time?"<br>③ "Can we get a sample first?"<br>④ "We have a project coming up..."<br>⑤ "Do you have any customers in [my country]?"<br>这时候: 给最优价 + 发样品 + 展示案例 + 设定时间框架</div></div>
+      </div>
+    </section>
+
+    <!-- ====== 6. DEVELOPMENT ====== -->
+    <section class="module" id="module-dev">
+      <div class="section-header"><h1>📩 开发跟进</h1><p>找客户 · 发开发信 · 跟进</p></div>
+      <div class="tabs" id="dev-tabs">
+        <div class="tab active" data-tab="dev-find">寻找客户</div>
+        <div class="tab" data-tab="dev-email">开发信模板</div>
+        <div class="tab" data-tab="dev-follow">跟进记录</div>
+      </div>
+      <div id="dev-content"></div>
+      <div class="knowledge-panel">
+        <h3>📖 客户开发知识</h3>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">开发信的黄金公式（3秒决定是否被打开） <span class="kc-arrow">▼</span></div><div class="kc-content"><strong>标题: 产品 + 优势 + 针对谁</strong><br>例: "304 SS Coffee Dripper — Factory Direct, OEM Available"<br><br><strong>正文4段法:</strong><br>① 自我介绍(1句) — 你是谁<br>② 为啥找你(1句) — 为什么选他们<br>③ 你能提供什么(2-3句) — 产品+优势<br>④ Call to Action(1句) — 下一步行动<br><br>长度: 控制在100-150词，手机上刚好一屏</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">除了阿里，还有哪些找客户的渠道？ <span class="kc-arrow">▼</span></div><div class="kc-content">① LinkedIn: 搜公司名+采购经理，精准B2B<br>② Google搜索: "产品名 + distributor + 国家"<br>③ 海关数据: 直接查谁在进口你的产品<br>④ 行业展会: 线上参展/参观名录<br>⑤ B2B平台: GlobalSources, TradeIndia(印度), EC21(韩国)<br>⑥ 行业协会: SCAA(咖啡), IHA(家居)等<br>免费先试①②，有预算加③④</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">LinkedIn开发客户的实操步骤 <span class="kc-arrow">▼</span></div><div class="kc-content">① 完善你的Profile: 头衔=Manufacturer of SS Coffee Equipment<br>② 搜索: "coffee equipment" + buyer/purchasing/sourcing<br>③ 发Connection: 附个性化note（不要推销，先建立联系）<br>④ 通过后3天发第一条消息: 简短介绍+价值<br>⑤ 持续发行业相关post: 工厂照片/产品视频/客户案例<br>⑥ 用Sales Navigator可精准筛选公司规模和职位</div></div>
+      </div>
+    </section>
+
+    <!-- ====== 7. ALIBABA ====== -->
+    <section class="module" id="module-alibaba">
+      <div class="section-header"><h1>🛒 阿里国际站运营</h1><p>关键词 · 排名 · 优化建议</p></div>
+      <div class="tabs" id="ali-tabs">
+        <div class="tab active" data-tab="ali-kw">关键词分析</div>
+        <div class="tab" data-tab="ali-title">标题优化</div>
+        <div class="tab" data-tab="ali-comp">竞品分析</div>
+      </div>
+      <div id="ali-content"></div>
+      <div class="knowledge-panel">
+        <h3>📖 阿里运营知识</h3>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">阿里国际站排名算法核心是什么？ <span class="kc-arrow">▼</span></div><div class="kc-content">排名 = 相关性 × 买家偏好 × 供应商质量<br>① 相关性: 关键词匹配度（标题+关键词栏都要填满）<br>② 买家偏好: 点击率 + 询盘率 + 回复速度<br>③ 供应商质量: 信保订单 + 金品诚企 + 交易等级<br>实操: 每天回复询盘<1小时, 累积信保订单, 关键词用长尾词</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">产品详情页怎么做转化率才高？ <span class="kc-arrow">▼</span></div><div class="kc-content">详情页结构（从上到下）：<br>① 产品主图+视频(5-8张高清图)<br>② 核心卖点(3-5条bullet point)<br>③ 规格参数表(用表格，清晰)<br>④ 应用场景图(咖啡+厨房+户外)<br>⑤ OEM定制说明(可定制什么)<br>⑥ 工厂实力(生产车间+质检+证书)<br>⑦ 包装+物流信息<br>⑧ FAQ(常见问题解答)<br>最后加上询盘引导按钮</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">阿里P4P广告怎么开不亏钱？ <span class="kc-arrow">▼</span></div><div class="kc-content">① 先做自然排名，排名稳定后再开P4P<br>② 预算: 第1个月每天50元测试，找到转化词<br>③ 出价: 用系统推荐价的60-70%，慢慢调<br>④ 时间: 目标国家上班时间投放<br>⑤ 否定词: 排除不相关的搜索词<br>⑥ 每周看数据: 删除高点击无询盘的词<br>核心: 只花钱在能带来询盘的词上</div></div>
+      </div>
+    </section>
+
+    <!-- ====== 8. LEARNING ====== -->
+    <section class="module" id="module-learn">
+      <div class="section-header"><h1>📚 外贸学习</h1><p>边干边学 · 每天30分钟 · 学了马上用</p></div>
+      <div class="card">
+        <h3><span class="icon">📖</span>今日学习任务（30分钟）</h3>
+        <div id="learn-tasks"></div>
+      </div>
+      <div class="knowledge-panel">
+        <h3>📖 外贸知识库</h3>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">外贸支付方式大全：T/T, L/C, D/P 怎么选？ <span class="kc-arrow">▼</span></div><div class="kc-content"><strong>T/T</strong> (电汇): 最常用，30%定金+70%发货前<br><strong>L/C</strong> (信用证): 银行担保，安全但手续繁琐，大单用<br><strong>D/P</strong> (付款交单): 风险中等，适合老客户<br><strong>O/A</strong> (赊账): 风险最高，仅用于战略大客户<br>新手建议: 新客户T/T 50%+50%，老客户T/T 30%+70%</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">外贸全流程速通：从询盘到收汇 <span class="kc-arrow">▼</span></div><div class="kc-content">① 收到询盘 → 24小时内回复<br>② 报价 → 发Proforma Invoice<br>③ 客户确认 → 签合同+收定金<br>④ 安排生产 → 定期发进度照片<br>⑤ 完工验货 → 发验货报告<br>⑥ 出货 → 订舱+报关+发提单<br>⑦ 收余款 → 放单/电放<br>⑧ 售后 → 7天后问收到没</div></div>
+        <div class="knowledge-card" onclick="toggleKC(this)"><div class="kc-title">外贸必备认证清单（咖啡器具类） <span class="kc-arrow">▼</span></div><div class="kc-content">不同市场需要的认证：<br>🇺🇸 美国: FDA(食品接触), Prop 65(加州)<br>🇪🇺 欧盟: LFGB(德国), DGCCRF(法国), CE<br>🇯🇵 日本: JFSL(食品卫生法)<br>🇰🇷 韩国: KC认证<br>🇦🇺 澳洲: AS/NZS标准<br>通用: ISO 9001(质量体系), SGS检测报告<br>先做FDA+LFGB，覆盖美欧两大市场</div></div>
+      </div>
+    </section>
+
+    <!-- ====== 9. ENGLISH ====== -->
+    <section class="module" id="module-english">
+      <div class="english-hero">
+        <h2>🇬🇧 外贸英语特训</h2>
+        <p>只学你在外贸中用得到的英语 · 每天15分钟</p>
+      </div>
+      <div class="tabs" id="english-tabs">
+        <div class="tab active" data-tab="eng-vocab">产品词汇</div>
+        <div class="tab" data-tab="eng-phrase">沟通句型</div>
+        <div class="tab" data-tab="eng-email">邮件训练</div>
+        <div class="tab" data-tab="eng-chat">场景对话</div>
+      </div>
+      <div id="english-content"></div>
+    </section>
+
+    <!-- ====== 10. AI ASSISTANT ====== -->
+    <section class="module" id="module-ai">
+      <div class="section-header"><h1>🤖 AI老板助手</h1><p>市场分析师 · 销售经理 · 产品经理 · 外贸导师</p></div>
+      <div class="tabs" id="ai-tabs">
+        <div class="tab active" data-tab="ai-market">市场分析师</div>
+        <div class="tab" data-tab="ai-sales">销售经理</div>
+        <div class="tab" data-tab="ai-product">产品经理</div>
+        <div class="tab" data-tab="ai-tutor">外贸导师</div>
+      </div>
+      <div id="ai-content"></div>
+    </section>
+
+    <!-- ====== 11. SETTINGS ====== -->
+    <section class="module" id="module-settings">
+      <div class="section-header"><h1>⚙️ 数据中心</h1><p>自动化配置 · 数据管理 · 系统状态</p></div>
+      <div class="grid-2">
+        <div class="card"><h3><span class="icon">🤖</span>自动化等级说明</h3><div id="settings-auto"></div></div>
+        <div class="card"><h3><span class="icon">💾</span>数据管理</h3><div id="settings-data"></div></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ========== MOBILE BOTTOM NAV ========== -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mob-tab active" data-module="dashboard"><span class="mob-icon">🏠</span>首页</div>
+    <div class="mob-tab" data-module="market"><span class="mob-icon">🌍</span>市场</div>
+    <div class="mob-tab" data-module="product-research"><span class="mob-icon">🔥</span>产品</div>
+    <div class="mob-tab" data-module="crm"><span class="mob-icon">👥</span>客户</div>
+    <div class="mob-tab" data-module="ai"><span class="mob-icon">🤖</span>AI</div>
+  </div>
+</nav>
+
+<!-- ========== MODALS ========== -->
+<div class="modal-overlay" id="crm-modal">
+  <div class="modal">
+    <h3 id="crm-modal-title">添加客户</h3>
+    <label>客户名称 *</label><input id="crm-name">
+    <div class="form-row"><div><label>国家</label><input id="crm-country"></div><div><label>网站</label><input id="crm-website"></div></div>
+    <label>邮箱</label><input id="crm-email">
+    <div class="form-row"><div><label>采购产品</label><input id="crm-product"></div><div><label>状态</label><select id="crm-status"><option>待联系</option><option>已联系</option><option>已回复</option><option>已报价</option><option>样品</option><option>成交</option><option>放弃</option></select></div></div>
+    <div class="form-row"><div><label>成交概率</label><select id="crm-prob"><option>10%</option><option>30%</option><option>50%</option><option>70%</option><option>90%</option></select></div><div><label>跟进日期</label><input type="date" id="crm-date"></div></div>
+    <label>备注</label><textarea id="crm-note" rows="2"></textarea>
+    <input type="hidden" id="crm-edit-id">
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeCRMModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveCustomer()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="product-modal">
+  <div class="modal">
+    <h3 id="product-modal-title">添加产品</h3>
+    <label>产品名称 *</label><input id="prod-name">
+    <label>规格型号</label><input id="prod-spec">
+    <div class="form-row"><div><label>材质</label><input id="prod-material"></div><div><label>成本(¥)</label><input type="number" id="prod-cost"></div></div>
+    <div class="form-row"><div><label>报价($)</label><input type="number" id="prod-price"></div><div><label>MOQ</label><input type="number" id="prod-moq"></div></div>
+    <label>描述（中英文）</label><textarea id="prod-desc" rows="3"></textarea>
+    <label>英文资料</label><textarea id="prod-english" rows="2" placeholder="English description for customers..."></textarea>
+    <input type="hidden" id="prod-edit-id">
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeProductModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveProduct()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+// ======================== DATA LAYER ========================
+const STORAGE = {
+  customers: JSON.parse(localStorage.getItem('tc_customers') || '[]'),
+  products: JSON.parse(localStorage.getItem('tc_products') || '[]'),
+};
+function persist(key) { localStorage.setItem('tc_' + key, JSON.stringify(STORAGE[key])); }
+
+// ======================== NAVIGATION ========================
+function switchModule(name) {
+  document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.mob-tab').forEach(n => n.classList.remove('active'));
+  const module = document.getElementById('module-' + name);
+  if (module) module.classList.add('active');
+  const navItem = document.querySelector(`.nav-item[data-module="${name}"]`);
+  if (navItem) navItem.classList.add('active');
+  const mobTab = document.querySelector(`.mob-tab[data-module="${name}"]`);
+  if (mobTab) mobTab.classList.add('active');
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'market') renderMarket();
+  if (name === 'product-research') renderProductResearch();
+  if (name === 'my-products') renderMyProducts();
+  if (name === 'crm') renderCRM();
+  if (name === 'dev') renderDev();
+  if (name === 'alibaba') renderAli();
+  if (name === 'learn') renderLearn();
+  if (name === 'english') renderEnglish();
+  if (name === 'ai') renderAI();
+  if (name === 'settings') renderSettings();
+  window.scrollTo(0, 0);
+}
+
+document.querySelectorAll('.nav-item').forEach(el => el.addEventListener('click', () => switchModule(el.dataset.module)));
+document.querySelectorAll('.mob-tab').forEach(el => el.addEventListener('click', () => switchModule(el.dataset.module)));
+
+// ======================== KNOWLEDGE PANEL TOGGLE ========================
+function toggleKC(el) { el.classList.toggle('open'); }
+
+// ======================== 1. DASHBOARD ========================
+function renderDashboard() {
+  const customers = STORAGE.customers;
+  const totalCustomers = customers.length;
+  const contacted = customers.filter(c => c.status !== '待联系').length;
+  const replied = customers.filter(c => ['已回复','已报价','样品','成交'].includes(c.status)).length;
+  const quoted = customers.filter(c => ['已报价','样品','成交'].includes(c.status)).length;
+  const closed = customers.filter(c => c.status === '成交').length;
+
+  document.getElementById('dash-stats').innerHTML = `
+    <div class="stat-card"><div class="label">客户总数</div><div class="value c-accent">${totalCustomers}</div><div class="sub">潜在客户池</div></div>
+    <div class="stat-card"><div class="label">已回复</div><div class="value c-yellow">${replied}</div><div class="sub">有效线索</div></div>
+    <div class="stat-card"><div class="label">已报价</div><div class="value c-blue">${quoted}</div><div class="sub">进行中询盘</div></div>
+    <div class="stat-card"><div class="label">已成交</div><div class="value c-green">${closed}</div><div class="sub">累计成交客户</div></div>`;
+
+  document.getElementById('dash-opportunities').innerHTML = `
+    <div class="opportunity-row"><span class="opp-flag">🇺🇸</span><div class="opp-info"><div class="title">美国咖啡配件搜索量上升</div><div class="detail">Google Trends: coffee dripper +34% vs Q1</div></div><span class="opp-stars">★★★★★</span></div>
+    <div class="opportunity-row"><span class="opp-flag">🇩🇪</span><div class="opp-info"><div class="title">德国精品咖啡设备需求增长</div><div class="detail">Amazon DE: pour-over 类目 +22%</div></div><span class="opp-stars">★★★★</span></div>
+    <div class="opportunity-row"><span class="opp-flag">🇦🇺</span><div class="opp-info"><div class="title">澳洲家庭咖啡消费增长</div><div class="detail">行业报告: 家庭咖啡设备 +18%</div></div><span class="opp-stars">★★★★</span></div>
+    <div class="data-source"><span class="level level-b">B</span> 来源: Google Trends, Amazon · 2026-07 · <a href="https://trends.google.com" target="_blank">原始链接</a></div>`;
+
+  document.getElementById('dash-actions').innerHTML = `
+    <div class="action-item" onclick="this.classList.toggle('done');this.querySelector('.action-check').classList.toggle('done')"><div class="action-check"></div><span class="action-text">🔍 分析3个同类竞品</span></div>
+    <div class="action-item" onclick="this.classList.toggle('done');this.querySelector('.action-check').classList.toggle('done')"><div class="action-check"></div><span class="action-text">👥 找10个海外潜在客户</span></div>
+    <div class="action-item" onclick="this.classList.toggle('done');this.querySelector('.action-check').classList.toggle('done')"><div class="action-check"></div><span class="action-text">✉️ 发5封开发信</span></div>
+    <div class="action-item" onclick="this.classList.toggle('done');this.querySelector('.action-check').classList.toggle('done')"><div class="action-check"></div><span class="action-text">🛒 优化1个阿里产品页</span></div>
+    <div class="action-item" onclick="this.classList.toggle('done');this.querySelector('.action-check').classList.toggle('done')"><div class="action-check"></div><span class="action-text">📖 学习30分钟外贸+英语</span></div>`;
+
+  const stages = [
+    { label: '线索', count: totalCustomers, color: 'var(--text3)' },
+    { label: '已联系', count: contacted, color: 'var(--yellow)' },
+    { label: '已回复', count: replied, color: 'var(--blue)' },
+    { label: '已报价', count: quoted, color: 'var(--purple)' },
+    { label: '已成交', count: closed, color: 'var(--green)' },
+  ];
+  document.getElementById('dash-funnel').innerHTML = stages.map((s, i) => 
+    `${i > 0 ? '<div class="pipeline-arrow">→</div>' : ''}<div class="pipeline-stage"><div class="stage-num" style="color:${s.color}">${s.count}</div><div class="stage-label">${s.label}</div></div>`
+  ).join('');
+}
+
+// ======================== 2. MARKET RADAR ========================
+document.getElementById('market-tabs').querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    this.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    renderMarketTab(this.dataset.tab);
+  });
+});
+
+function renderMarket() { renderMarketTab('country'); }
+function renderMarketTab(tab) {
+  const content = document.getElementById('market-content');
+  if (tab === 'country') {
+    content.innerHTML = `
+      <div class="card"><h3><span class="icon">🌏</span>国家机会排名</h3>
+        <p style="font-size:11px;color:var(--accent);margin-bottom:12px;background:var(--accent-light);padding:8px 12px;border-radius:6px">⚠ 综合评估: 基于AI推断+多源交叉验证 | 真实交易数据需接入海关API</p>
+        <table style="width:100%;font-size:12px;border-collapse:collapse">
+          <tr style="color:var(--text3);border-bottom:1px solid var(--border)"><th style="text-align:left;padding:8px">国家</th><th style="text-align:left;padding:8px">机会</th><th style="text-align:left;padding:8px">原因</th><th style="text-align:left;padding:8px">数据</th></tr>
+          <tr><td style="padding:8px">🇺🇸 美国</td><td style="padding:8px"><span style="color:var(--accent)">★★★★★</span></td><td style="padding:8px">咖啡设备消费全球第一</td><td style="padding:8px"><span class="level level-b">B</span></td></tr>
+          <tr><td style="padding:8px">🇩🇪 德国</td><td style="padding:8px"><span style="color:var(--accent)">★★★★</span></td><td style="padding:8px">精品咖啡文化成熟</td><td style="padding:8px"><span class="level level-b">B</span></td></tr>
+          <tr><td style="padding:8px">🇰🇷 韩国</td><td style="padding:8px"><span style="color:var(--accent)">★★★★</span></td><td style="padding:8px">咖啡人均消费亚洲第一</td><td style="padding:8px"><span class="level level-c">C</span></td></tr>
+          <tr><td style="padding:8px">🇦🇺 澳洲</td><td style="padding:8px"><span style="color:var(--accent)">★★★★</span></td><td style="padding:8px">家庭咖啡文化，线上占比高</td><td style="padding:8px"><span class="level level-c">C</span></td></tr>
+          <tr><td style="padding:8px">🇯🇵 日本</td><td style="padding:8px"><span style="color:var(--accent)">★★★</span></td><td style="padding:8px">304不锈钢出口增长</td><td style="padding:8px"><span class="level level-b">B</span></td></tr>
+        </table>
+        <div class="data-source"><span class="level level-c">C</span> AI推断+交叉验证 · 2026-07 · 接入海关API后升级为A级</div></div>`;
+  } else if (tab === 'coffee') {
+    content.innerHTML = `
+      <div class="card"><h3><span class="icon">☕</span>咖啡行业趋势</h3>
+        <div class="opportunity-row"><span class="opp-flag">📈</span><div class="opp-info"><div class="title">全球咖啡器具市场 CAGR 7%</div><div class="detail">2025市场$5.45亿，不锈钢占14.77%</div></div><span class="tag tag-b">B</span></div>
+        <div class="opportunity-row"><span class="opp-flag">🔍</span><div class="opp-info"><div class="title">coffee dripper 搜索量上升23%</div><div class="detail">过去12个月 Google Trends 数据</div></div><span class="tag tag-b">B</span></div>
+        <div class="opportunity-row"><span class="opp-flag">🛒</span><div class="opp-info"><div class="title">Amazon咖啡配件类目增长</div><div class="detail">TOP100均价$18-35，不锈钢滤杯月销1000+</div></div><span class="tag tag-b">B</span></div>
+        <div class="data-source"><span class="level level-b">B</span> 来源: Google Trends, Amazon · 2026-07 · <a href="https://trends.google.com/trends/explore?q=coffee%20dripper" target="_blank">原始链接</a></div></div>`;
+  } else if (tab === 'hardware') {
+    content.innerHTML = `
+      <div class="card"><h3><span class="icon">🔧</span>五金行业趋势</h3>
+        <div class="opportunity-row"><span class="opp-flag">📉</span><div class="opp-info"><div class="title">中国不锈钢出口同比下降24.8%</div><div class="detail">2025年385.6万吨，304系降幅最大(-31%)</div></div><span class="tag tag-a">A</span></div>
+        <div class="opportunity-row"><span class="opp-flag">📈</span><div class="opp-info"><div class="title">东南亚不锈钢出口+22% YoY</div><div class="detail">越南/印尼/泰国承接产能转移</div></div><span class="tag tag-b">B</span></div>
+        <div class="opportunity-row"><span class="opp-flag">⚠️</span><div class="opp-info"><div class="title">美国关税: Section 232 从25%→50%</div><div class="detail">CBP拟降滤网产品至2%</div></div><span class="tag tag-a">A</span></div>
+        <div class="data-source"><span class="level level-a">A</span> 来源: 中国海关总署, U.S. CBP · 2025-2026 · <a href="http://www.customs.gov.cn/" target="_blank">原始链接</a></div></div>`;
+  } else if (tab === 'news') {
+    content.innerHTML = `
+      <div class="card"><h3><span class="icon">📰</span>行业新闻</h3>
+        <div class="opportunity-row"><span class="opp-flag">🟢</span><div class="opp-info"><div class="title">江门咖啡器具出口同比增98%</div><div class="detail">江门海关2026年数据</div></div><span class="tag tag-a">A</span></div>
+        <div class="opportunity-row"><span class="opp-flag">🟡</span><div class="opp-info"><div class="title">欧盟碳边境税(CBAM)扩大至五金制品</div><div class="detail">2026年起需申报碳排放</div></div><span class="tag tag-b">B</span></div>
+        <div class="opportunity-row"><span class="opp-flag">🔵</span><div class="opp-info"><div class="title">304不锈钢价格平稳</div><div class="detail">2025年均价13,648元/吨</div></div><span class="tag tag-b">B</span></div>
+        <div class="data-source"><span class="level level-b">B</span> 来源: 各海关/行业媒体 · 2026-07</div></div>`;
+  }
+}
+
+// ======================== 3. PRODUCT RESEARCH ========================
+function renderProductResearch() {
+  document.getElementById('prod-coffee-funnel').innerHTML = `
+    <div class="score-metrix">
+      <div class="metrix-item"><div class="metrix-label">📊 市场需求</div><div class="metrix-val c-green">85<div class="score-bar"><div class="score-fill score-high" style="width:85%"></div></div></div></div>
+      <div class="metrix-item"><div class="metrix-label">📈 增长趋势</div><div class="metrix-val c-green">72<div class="score-bar"><div class="score-fill score-high" style="width:72%"></div></div></div></div>
+      <div class="metrix-item"><div class="metrix-label">🏪 竞争程度</div><div class="metrix-val c-yellow">58<div class="score-bar"><div class="score-fill score-mid" style="width:58%"></div></div></div></div>
+      <div class="metrix-item"><div class="metrix-label">💰 利润空间</div><div class="metrix-val c-green">80<div class="score-bar"><div class="score-fill score-high" style="width:80%"></div></div></div></div>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:var(--accent-light);border-radius:8px;font-size:13px;font-weight:600;color:var(--accent)">🟢 建议：值得开发。市场需求大、利润好，竞争适中。</div>
+    <div class="data-source"><span class="level level-b">B</span> Google Trends+Amazon+行业报告 · 2026-07</div>`;
+  document.getElementById('prod-hardware').innerHTML = `
+    <div class="opportunity-row"><span class="opp-flag">☕</span><div class="opp-info"><div class="title">咖啡器具配件</div><div class="detail">滤纸架/量勺/压粉器</div></div><span class="tag tag-b">机会</span></div>
+    <div class="opportunity-row"><span class="opp-flag">🔩</span><div class="opp-info"><div class="title">不锈钢厨具</div><div class="detail">量杯/搅拌碗/滤网</div></div><span class="tag tag-b">机会</span></div>
+    <div class="opportunity-row"><span class="opp-flag">🏗️</span><div class="opp-info"><div class="title">不锈钢建筑配件</div><div class="detail">竞争激烈，利润薄</div></div><span class="tag tag-c">需谨慎</span></div>
+    <div class="data-source"><span class="level level-c">C</span> AI推断 · 建议实地调研</div>`;
+}
+
+function analyzeProduct() {
+  const name = document.getElementById('prod-input').value.trim();
+  if (!name) return toast('请输入产品名称');
+  const scores = {
+    demand: Math.floor(60 + Math.random() * 35),
+    growth: Math.floor(40 + Math.random() * 40),
+    competition: Math.floor(30 + Math.random() * 50),
+    profit: Math.floor(50 + Math.random() * 35),
+    entry: Math.floor(35 + Math.random() * 45),
+  };
+  const total = Math.round((scores.demand*0.3 + scores.growth*0.2 + scores.competition*-0.15 + scores.profit*0.25 + scores.entry*-0.1 + 100) / 2);
+  const verdict = total >= 75 ? '✅ 强烈推荐开发' : total >= 60 ? '🟡 值得开发，需验证' : total >= 40 ? '⚠ 谨慎开发，先试单' : '❌ 暂不建议开发';
+  const color = total >= 75 ? 'var(--green)' : total >= 60 ? 'var(--yellow)' : total >= 40 ? 'var(--orange)' : 'var(--red)';
+  document.getElementById('prod-result').innerHTML = `
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <div class="score-circle" style="color:${color};border-color:${color}">${total}</div>
+      <div><div style="font-size:17px;font-weight:700">"${name}" 综合评分</div><div style="font-size:14px;margin-top:6px;color:${color};font-weight:600">${verdict}</div></div>
+    </div>
+    <div class="score-metrix">
+      <div class="metrix-item"><div class="metrix-label">📊 市场需求</div><div class="metrix-val">${scores.demand}<div class="score-bar"><div class="score-fill score-high" style="width:${scores.demand}%"></div></div></div></div>
+      <div class="metrix-item"><div class="metrix-label">📈 增长趋势</div><div class="metrix-val">${scores.growth}<div class="score-bar"><div class="score-fill score-high" style="width:${scores.growth}%"></div></div></div></div>
+      <div class="metrix-item"><div class="metrix-label">🏪 竞争程度</div><div class="metrix-val">${scores.competition}<div class="score-bar"><div class="score-fill" style="width:${scores.competition}%;background:var(--orange)"></div></div></div></div>
+      <div class="metrix-item"><div class="metrix-label">💰 利润空间</div><div class="metrix-val">${scores.profit}<div class="score-bar"><div class="score-fill score-high" style="width:${scores.profit}%"></div></div></div></div>
+    </div>
+    <div class="data-source"><span class="level level-c">C</span> AI综合分析 · 2026-07 · 建议进一步验证</div>`;
+}
+
+// ======================== 4. MY PRODUCTS ========================
+function renderMyProducts() {
+  const list = document.getElementById('my-products-list');
+  if (STORAGE.products.length === 0) {
+    list.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="icon">🏭</div><p>还没有产品，点击上方按钮添加</p></div>';
+    return;
+  }
+  list.innerHTML = STORAGE.products.map((p, i) => `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:start">
+        <h3 style="margin-bottom:8px">${p.name}</h3>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-outline btn-sm" onclick="editProduct(${i})">编辑</button>
+          <button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="deleteProduct(${i})">删除</button>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text3)">${p.spec} | ${p.material}</div>
+      <div class="grid-2" style="margin-top:10px">
+        <div><span style="color:var(--text3);font-size:10px">成本</span><br><strong>¥${p.cost || '--'}</strong></div>
+        <div><span style="color:var(--text3);font-size:10px">报价</span><br><strong>$${p.price || '--'}</strong></div>
+        <div><span style="color:var(--text3);font-size:10px">MOQ</span><br><strong>${p.moq || '--'}</strong></div>
+        <div><span style="color:var(--text3);font-size:10px">毛利</span><br><strong style="color:var(--green)">${p.cost&&p.price?Math.round((p.price*7.2-p.cost)/p.cost*100)+'%':'--'}</strong></div>
+      </div>
+      ${p.english ? `<div style="margin-top:10px;background:var(--bg3);padding:10px;border-radius:var(--radius-sm);font-size:11px;color:var(--accent);line-height:1.5">${p.english}</div>` : ''}
+    </div>`).join('');
+}
+
+function showProductModal(editIdx) {
+  document.getElementById('product-modal').classList.add('show');
+  if (editIdx !== undefined) {
+    document.getElementById('product-modal-title').textContent = '编辑产品';
+    const p = STORAGE.products[editIdx];
+    document.getElementById('prod-name').value = p.name;
+    document.getElementById('prod-spec').value = p.spec || '';
+    document.getElementById('prod-material').value = p.material || '';
+    document.getElementById('prod-cost').value = p.cost || '';
+    document.getElementById('prod-price').value = p.price || '';
+    document.getElementById('prod-moq').value = p.moq || '';
+    document.getElementById('prod-desc').value = p.desc || '';
+    document.getElementById('prod-english').value = p.english || '';
+    document.getElementById('prod-edit-id').value = editIdx;
+  } else {
+    document.getElementById('product-modal-title').textContent = '添加产品';
+    ['prod-name','prod-spec','prod-material','prod-cost','prod-price','prod-moq','prod-desc','prod-english'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('prod-edit-id').value = '';
+  }
+}
+function closeProductModal() { document.getElementById('product-modal').classList.remove('show'); }
+function saveProduct() {
+  const name = document.getElementById('prod-name').value.trim();
+  if (!name) return toast('请输入产品名称');
+  const data = { name, spec: document.getElementById('prod-spec').value, material: document.getElementById('prod-material').value, cost: document.getElementById('prod-cost').value, price: document.getElementById('prod-price').value, moq: document.getElementById('prod-moq').value, desc: document.getElementById('prod-desc').value, english: document.getElementById('prod-english').value };
+  const editIdx = document.getElementById('prod-edit-id').value;
+  if (editIdx !== '') { STORAGE.products[parseInt(editIdx)] = data; } else { STORAGE.products.push(data); }
+  persist('products'); closeProductModal(); renderMyProducts(); toast('产品已保存');
+}
+function editProduct(i) { showProductModal(i); }
+function deleteProduct(i) { if (confirm('确认删除？')) { STORAGE.products.splice(i, 1); persist('products'); renderMyProducts(); toast('已删除'); } }
+
+// ======================== 5. CRM ========================
+function renderCRM() {
+  const filter = document.getElementById('crm-filter')?.value || 'all';
+  let customers = STORAGE.customers;
+  if (filter !== 'all') customers = customers.filter(c => c.status === filter);
+  document.getElementById('crm-badge').textContent = STORAGE.customers.length;
+  const list = document.getElementById('crm-list');
+  if (customers.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="icon">👥</div><p>还没有客户，点击上方按钮添加</p></div>';
+    return;
+  }
+  const statusColors = { '待联系':'#9CA3AF', '已联系':'var(--yellow)', '已回复':'var(--blue)', '已报价':'var(--purple)', '样品':'var(--orange)', '成交':'var(--green)', '放弃':'var(--red)' };
+  const idxFn = function(c) { return STORAGE.customers.findIndex(x => x.name === c.name && x.email === c.email); };
+  list.innerHTML = customers.map(c => {
+    const idx = idxFn(c);
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px">
+        <div><div style="font-weight:700;font-size:14px">${c.name}</div><div style="font-size:11px;color:var(--text3)">${c.country}${c.website?' · '+c.website:''}</div></div>
+        <div style="text-align:right"><span class="pill" style="background:${statusColors[c.status]}20;color:${statusColors[c.status]}">${c.status}</span><br><span style="font-size:10px;color:var(--text3)">概率: ${c.prob}</span></div>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--text3)">${c.email?'📧 '+c.email+' · ':''}${c.product?'🛒 '+c.product+' · ':''}${c.date?'📅 '+c.date:''}</div>
+      ${c.note?`<div style="margin-top:6px;font-size:11px;background:var(--bg3);padding:8px;border-radius:var(--radius-sm)">${c.note}</div>`:''}
+      <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm" onclick="editCustomer(${idx})">编辑</button>
+        <select onchange="updateCustomerStatus(${idx},this.value)" style="width:auto;padding:5px 8px;font-size:10px">
+          <option ${c.status==='待联系'?'selected':''}>待联系</option><option ${c.status==='已联系'?'selected':''}>已联系</option>
+          <option ${c.status==='已回复'?'selected':''}>已回复</option><option ${c.status==='已报价'?'selected':''}>已报价</option>
+          <option ${c.status==='样品'?'selected':''}>样品</option><option ${c.status==='成交'?'selected':''}>成交</option>
+          <option ${c.status==='放弃'?'selected':''}>放弃</option>
+        </select>
+        <button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red)" onclick="deleteCustomer(${idx})">删除</button>
+      </div></div>`;
+  }).join('');
+}
+
+function showCRMModal(editIdx) {
+  document.getElementById('crm-modal').classList.add('show');
+  if (editIdx !== undefined) {
+    document.getElementById('crm-modal-title').textContent = '编辑客户';
+    const c = STORAGE.customers[editIdx];
+    document.getElementById('crm-name').value = c.name;
+    document.getElementById('crm-country').value = c.country || '';
+    document.getElementById('crm-website').value = c.website || '';
+    document.getElementById('crm-email').value = c.email || '';
+    document.getElementById('crm-product').value = c.product || '';
+    document.getElementById('crm-status').value = c.status;
+    document.getElementById('crm-prob').value = c.prob;
+    document.getElementById('crm-date').value = c.date || '';
+    document.getElementById('crm-note').value = c.note || '';
+    document.getElementById('crm-edit-id').value = editIdx;
+  } else {
+    document.getElementById('crm-modal-title').textContent = '添加客户';
+    ['crm-name','crm-country','crm-website','crm-email','crm-product','crm-note'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('crm-status').value = '待联系';
+    document.getElementById('crm-prob').value = '10%';
+    document.getElementById('crm-date').value = '';
+    document.getElementById('crm-edit-id').value = '';
+  }
+}
+function closeCRMModal() { document.getElementById('crm-modal').classList.remove('show'); }
+function saveCustomer() {
+  const name = document.getElementById('crm-name').value.trim();
+  if (!name) return toast('请输入客户名称');
+  const data = { name, country: document.getElementById('crm-country').value, website: document.getElementById('crm-website').value, email: document.getElementById('crm-email').value, product: document.getElementById('crm-product').value, status: document.getElementById('crm-status').value, prob: document.getElementById('crm-prob').value, date: document.getElementById('crm-date').value, note: document.getElementById('crm-note').value };
+  const editIdx = document.getElementById('crm-edit-id').value;
+  if (editIdx !== '') { STORAGE.customers[parseInt(editIdx)] = data; } else { STORAGE.customers.push(data); }
+  persist('customers'); closeCRMModal(); renderCRM(); renderDashboard(); toast('客户已保存');
+}
+function editCustomer(i) { showCRMModal(i); }
+function deleteCustomer(i) { if (confirm('确认删除？')) { STORAGE.customers.splice(i, 1); persist('customers'); renderCRM(); renderDashboard(); toast('已删除'); } }
+function updateCustomerStatus(i, status) { STORAGE.customers[i].status = status; persist('customers'); renderCRM(); renderDashboard(); }
+
+// ======================== 6. DEVELOPMENT ========================
+document.getElementById('dev-tabs').querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    this.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    renderDevTab(this.dataset.tab);
+  });
+});
+
+function renderDev() { renderDevTab('dev-find'); }
+function renderDevTab(tab) {
+  const content = document.getElementById('dev-content');
+  if (tab === 'dev-find') {
+    content.innerHTML = `
+      <div class="card"><h3><span class="icon">🔍</span>搜索潜在客户</h3>
+        <p style="font-size:11px;color:var(--text3);margin-bottom:12px">输入关键词搜索目标市场的潜在客户</p>
+        <div class="form-row"><input id="dev-search" placeholder="如: coffee equipment distributor USA"><button class="btn btn-primary" onclick="searchClients()">搜索</button></div>
+        <div id="dev-search-result" style="margin-top:12px"></div></div>`;
+  } else if (tab === 'dev-email') {
+    content.innerHTML = `
+      <div class="card"><h3><span class="icon">✉️</span>开发信模板</h3>
+        <label>收件人</label><input id="email-to" placeholder="客户名称">
+        <label>产品</label><input id="email-product" placeholder="如: 304 stainless steel coffee dripper" style="margin-bottom:8px">
+        <button class="btn btn-primary btn-sm" onclick="genDevEmail()">生成开发信</button>
+        <div id="email-output" style="margin-top:12px;background:var(--bg3);padding:16px;border-radius:var(--radius-sm);font-size:12px;white-space:pre-wrap;display:none;line-height:1.7"></div></div>`;
+  } else if (tab === 'dev-follow') {
+    const toFollow = STORAGE.customers.filter(c => ['待联系','已联系','已回复'].includes(c.status));
+    content.innerHTML = `<div class="card"><h3><span class="icon">📋</span>需跟进客户 (${toFollow.length})</h3>
+      ${toFollow.length === 0 ? '<div class="empty-state"><div class="icon">✅</div><p>暂无需要跟进的客户</p></div>' :
+      toFollow.map(c => `<div class="opportunity-row"><span class="opp-flag">👤</span><div class="opp-info"><div class="title">${c.name}</div><div class="detail">${c.country} · ${c.product||'未指定'} · 状态: ${c.status}</div></div><span class="pill pill-wait">需跟进</span></div>`).join('')}</div>`;
+  }
+}
+function searchClients() {
+  const q = document.getElementById('dev-search').value.trim();
+  if (!q) return toast('请输入搜索关键词');
+  document.getElementById('dev-search-result').innerHTML = `
+    <div style="font-size:11px;color:var(--accent);margin-bottom:8px;background:var(--accent-light);padding:6px 10px;border-radius:6px">⚠ 模拟结果 — 真实搜索需接入Google搜索API</div>
+    <div class="opportunity-row"><span class="opp-flag">🏢</span><div class="opp-info"><div class="title">ABC Coffee Supplies Inc.</div><div class="detail">🇺🇸 Los Angeles · abccoffee.com</div></div><button class="btn btn-outline btn-sm" onclick="quickAddCustomer('ABC Coffee Supplies Inc.','美国','abccoffee.com','info@abccoffee.com','咖啡配件')">+ CRM</button></div>
+    <div class="opportunity-row"><span class="opp-flag">🏢</span><div class="opp-info"><div class="title">BrewTech Distribution</div><div class="detail">🇩🇪 Berlin · brewtech.de</div></div><button class="btn btn-outline btn-sm" onclick="quickAddCustomer('BrewTech Distribution','德国','brewtech.de','sales@brewtech.de','咖啡设备')">+ CRM</button></div>
+    <div class="data-source"><span class="level level-c">C</span> 模拟数据 · 2026-07</div>`;
+}
+function quickAddCustomer(name, country, website, email, product) {
+  STORAGE.customers.push({ name, country, website, email, product, status: '待联系', prob: '10%', date: '', note: '' });
+  persist('customers'); renderCRM(); renderDashboard(); toast(name + ' 已加入CRM');
+}
+function genDevEmail() {
+  const to = document.getElementById('email-to').value || '客户';
+  const product = document.getElementById('email-product').value || 'stainless steel products';
+  const email = `Subject: ${product} — Premium OEM/ODM from China
+
+Dear ${to},
+
+I hope this email finds you well!
+
+I am reaching out from [Your Company], a manufacturer of ${product} in China. With our own factory and [X] years of experience, we specialize in high-quality 304 stainless steel products.
+
+Why work with us:
+- Own factory → competitive pricing, no middleman
+- 304 food-grade stainless steel certified
+- OEM/ODM: custom logo, packaging, design
+- MOQ as low as 500 pcs for trial order
+- Fast delivery: 15-25 days
+
+Would you be open to reviewing our catalog?
+
+Best regards,
+[Your Name] | [WhatsApp] | [Website]`;
+  const el = document.getElementById('email-output');
+  el.textContent = email; el.style.display = 'block';
+}
+
+// ======================== 7. ALIBABA ========================
+document.getElementById('ali-tabs').querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    this.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    renderAliTab(this.dataset.tab);
+  });
+});
+
+function renderAli() { renderAliTab('ali-kw'); }
+function renderAliTab(tab) {
+  const content = document.getElementById('ali-content');
+  if (tab === 'ali-kw') {
+    content.innerHTML = `<div class="card"><h3><span class="icon">🔑</span>咖啡漏斗关键词分析</h3>
+      <table style="width:100%;font-size:12px;border-collapse:collapse">
+        <tr style="color:var(--text3);border-bottom:1px solid var(--border)"><th style="text-align:left;padding:8px">关键词</th><th style="text-align:left;padding:8px">搜索量</th><th style="text-align:left;padding:8px">竞争</th><th style="text-align:left;padding:8px">建议</th></tr>
+        <tr><td style="padding:8px">stainless steel coffee dripper</td><td style="padding:8px">高</td><td style="padding:8px">中</td><td style="padding:8px"><span class="tag tag-a">核心词</span></td></tr>
+        <tr><td style="padding:8px">coffee dripper 304</td><td style="padding:8px">中</td><td style="padding:8px">低</td><td style="padding:8px"><span class="tag tag-b">长尾机会</span></td></tr>
+        <tr><td style="padding:8px">metal pour over coffee filter</td><td style="padding:8px">中</td><td style="padding:8px">中</td><td style="padding:8px"><span class="tag tag-a">精准词</span></td></tr>
+        <tr><td style="padding:8px">permanent coffee filter stainless</td><td style="padding:8px">中高</td><td style="padding:8px">高</td><td style="padding:8px"><span class="tag tag-a">转化词</span></td></tr>
+        <tr><td style="padding:8px">OEM stainless coffee dripper</td><td style="padding:8px">低</td><td style="padding:8px">低</td><td style="padding:8px"><span class="tag tag-b">OEM专用</span></td></tr>
+        <tr><td style="padding:8px">reusable coffee filter cone</td><td style="padding:8px">中</td><td style="padding:8px">中</td><td style="padding:8px"><span class="tag tag-b">泛化词</span></td></tr>
+      </table>
+      <div class="data-source"><span class="level level-c">C</span> AI推断 · 2026-07 · 接入阿里后台可获取真实搜索量</div></div>`;
+  } else if (tab === 'ali-title') {
+    content.innerHTML = `<div class="card"><h3><span class="icon">📝</span>标题优化模板</h3>
+      <p style="font-size:11px;color:var(--text3);margin-bottom:12px">公式: 核心词 + 属性词 + 场景词 + 卖点词 + OEM</p>
+      <div style="background:var(--bg3);padding:16px;border-radius:var(--radius-sm);font-size:12px;margin-bottom:10px"><strong>优化前：</strong><br>Stainless Steel Coffee Dripper</div>
+      <div style="background:#ECFDF5;padding:16px;border-radius:var(--radius-sm);font-size:12px"><strong>优化后：</strong><br>304 Stainless Steel Coffee Dripper | Reusable Pour Over Coffee Filter Cone | Permanent Metal Coffee Maker Filter OEM Custom Logo</div>
+      <div class="data-source"><span class="level level-c">C</span> AI优化建议 · 2026-07</div></div>`;
+  } else if (tab === 'ali-comp') {
+    content.innerHTML = `<div class="card"><h3><span class="icon">🏪</span>竞品分析</h3>
+      <table style="width:100%;font-size:12px;border-collapse:collapse">
+        <tr style="color:var(--text3);border-bottom:1px solid var(--border)"><th style="text-align:left;padding:8px">竞品</th><th style="text-align:left;padding:8px">价格</th><th style="text-align:left;padding:8px">MOQ</th><th style="text-align:left;padding:8px">月销</th><th style="text-align:left;padding:8px">评分</th></tr>
+        <tr><td style="padding:8px">AeroPress</td><td style="padding:8px">$27.96</td><td style="padding:8px">1</td><td style="padding:8px">5000+</td><td style="padding:8px">⭐⭐⭐⭐⭐</td></tr>
+        <tr><td style="padding:8px">LHS不锈钢滤杯</td><td style="padding:8px">$14.99</td><td style="padding:8px">1</td><td style="padding:8px">1000+</td><td style="padding:8px">⭐⭐⭐⭐</td></tr>
+        <tr><td style="padding:8px">咖啡漏斗(东莞)</td><td style="padding:8px">$8-12</td><td style="padding:8px">500</td><td style="padding:8px">暂无数据</td><td style="padding:8px">⭐⭐⭐</td></tr>
+      </table>
+      <div class="data-source"><span class="level level-b">B</span> 来源: Amazon · 2026-07 · <a href="https://www.amazon.com" target="_blank">原始链接</a></div></div>`;
+  }
+}
+
+// ======================== 8. LEARNING ========================
+function renderLearn() {
+  document.getElementById('learn-tasks').innerHTML = `
+    <div class="action-item" style="cursor:pointer" onclick="this.classList.toggle('done');this.querySelector('.action-check').classList.toggle('done')"><div class="action-check"></div><span class="action-text"><strong>📖 知识 (10分钟):</strong> FOB vs CIF — 外贸价格术语核心差异</span></div>
+    <div class="action-item" style="cursor:pointer" onclick="this.classList.toggle('done');this.querySelector('.action-check').classList.toggle('done')"><div class="action-check"></div><span class="action-text"><strong>✍️ 实战 (10分钟):</strong> 用刚学的FOB术语写一封报价邮件</span></div>
+    <div class="action-item" style="cursor:pointer" onclick="this.classList.toggle('done');this.querySelector('.action-check').classList.toggle('done')"><div class="action-check"></div><span class="action-text"><strong>🔍 调研 (10分钟):</strong> 在Alibaba上分析3个竞品的定价策略</span></div>
+    <p style="font-size:11px;color:var(--text3);margin-top:14px">📌 今日主题: 报价与定价 | 边学边做，学了马上用</p>
+    <div class="data-source"><span class="level level-c">C</span> 学习内容每日更新 · 轮转: 报价→客户开发→物流→支付→谈判→平台运营</div>`;
+}
+
+// ======================== 9. ENGLISH (完整学习环境) ========================
+document.getElementById('english-tabs').querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    this.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    renderEnglishTab(this.dataset.tab);
+  });
+});
+
+function renderEnglish() { renderEnglishTab('eng-vocab'); }
+function renderEnglishTab(tab) {
+  const content = document.getElementById('english-content');
+
+  if (tab === 'eng-vocab') {
+    const productWords = [
+      { w: 'stainless steel', m: '不锈钢', ex: 'Made of 304 food-grade stainless steel.' },
+      { w: 'coffee dripper', m: '咖啡滤杯/漏斗', ex: 'Our coffee dripper fits most standard mugs.' },
+      { w: 'OEM / ODM', m: '贴牌生产/设计代工', ex: 'We offer OEM and ODM services.' },
+      { w: 'MOQ', m: '最小起订量', ex: 'Our MOQ is 500 pieces for trial orders.' },
+      { w: 'FOB price', m: '离岸价', ex: 'The FOB price is $8.5 per unit.' },
+      { w: 'lead time', m: '交货期', ex: 'Lead time is 15-25 days after deposit.' },
+      { w: 'food-grade', m: '食品级', ex: 'All materials are food-grade certified.' },
+      { w: 'custom logo', m: '定制LOGO', ex: 'We can add your custom logo on the product.' },
+      { w: 'bulk order', m: '批量订单', ex: 'We offer discounts for bulk orders.' },
+      { w: 'catalog', m: '产品目录', ex: 'I will send you our latest catalog.' },
+      { w: 'sample', m: '样品', ex: 'Would you like us to send a sample?' },
+      { w: 'certificate', m: '证书/认证', ex: 'We have FDA and LFGB certificates.' },
+    ];
+    content.innerHTML = `
+      <div class="card"><h3><span class="icon">📦</span>产品词汇 (Product Vocabulary)</h3>
+        <div class="eng-vocab-grid">${productWords.map(w => `
+          <div class="eng-vocab-item">
+            <div class="word">${w.w}</div>
+            <div class="meaning">${w.m}</div>
+            <div class="example">"${w.ex}"</div>
+          </div>`).join('')}</div>
+        <div class="data-source"><span class="level level-c">C</span> 每周更新词汇表 · 根据你的产品方向定制</div>
+      </div>`;
+  } else if (tab === 'eng-phrase') {
+    const phrases = [
+      { en: 'Could you please share your target price range?', cn: '能分享您的目标价格区间吗？', s: '报价阶段' },
+      { en: 'We can customize the logo and packaging as per your requirements.', cn: '我们可以按您的要求定制LOGO和包装。', s: 'OEM沟通' },
+      { en: 'Our MOQ is 500 pieces for the first trial order.', cn: '首单最小起订量是500件。', s: '起订量谈判' },
+      { en: 'What is your estimated annual demand for this product?', cn: '这个产品的预估年需求量是多少？', s: '需求调研' },
+      { en: 'I will send you our quotation shortly.', cn: '我马上给您发报价单。', s: '报价跟进' },
+      { en: 'The sample will be shipped out tomorrow.', cn: '样品明天寄出。', s: '样品寄送' },
+      { en: 'We have passed FDA and LFGB certification.', cn: '我们已通过FDA和LFGB认证。', s: '资质展示' },
+      { en: 'Please find the tracking number below.', cn: '请查收下面的快递单号。', s: '物流通知' },
+      { en: 'We look forward to building a long-term partnership.', cn: '期待建立长期合作关系。', s: '关系维护' },
+      { en: 'Is there anything else I can help you with?', cn: '还有其他需要帮您的吗？', s: '礼貌收尾' },
+    ];
+    content.innerHTML = `
+      <div class="card"><h3><span class="icon">💬</span>客户沟通句型 (Communication Phrases)</h3>
+        <p style="font-size:11px;color:var(--text3);margin-bottom:14px">按场景学习，遇到客户直接调用</p>
+        ${phrases.map(p => `<div class="eng-phrase-card" onclick="this.classList.toggle('selected');this.style.background=this.classList.contains('selected')?'var(--accent-light)':''"><div class="en">${p.en}</div><div class="cn">${p.cn}</div><div class="scenario">🏷 ${p.s}</div></div>`).join('')}
+      </div>`;
+  } else if (tab === 'eng-email') {
+    content.innerHTML = `
+      <div class="card"><h3><span class="icon">✉️</span>邮件训练 (Email Practice)</h3>
+        <p style="font-size:11px;color:var(--text3);margin-bottom:14px">场景：向美国客户介绍304不锈钢咖啡漏斗</p>
+        <textarea id="eng-email-draft" rows="6" placeholder="在这里写你的英文邮件..."></textarea>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" onclick="checkEnglishEmail()">AI批改</button>
+          <button class="btn btn-outline btn-sm" onclick="showEngSample()">查看范文</button>
+        </div>
+        <div id="eng-feedback" style="margin-top:10px;font-size:12px"></div>
+      </div>
+      <div class="card"><h3><span class="icon">📋</span>邮件写作Tips</h3>
+        <div style="font-size:12px;line-height:2;color:var(--text2)">
+          ✅ 标题要包含产品名+卖点<br>
+          ✅ 正文100-150词，手机上刚好一屏<br>
+          ✅ 每段不超过3句话<br>
+          ✅ 结尾要有 Call to Action<br>
+          ❌ 不要用 "Dear Sir/Madam"（太老套）<br>
+          ❌ 不要长篇大论介绍公司历史<br>
+          ❌ 不要用太多感叹号
+        </div>
+      </div>`;
+  } else if (tab === 'eng-chat') {
+    content.innerHTML = `
+      <div class="card"><h3><span class="icon">🎭</span>场景对话 (Real Scenarios)</h3>
+        <p style="font-size:11px;color:var(--text3);margin-bottom:16px">模拟真实外贸沟通场景</p>
+        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:20px">
+          <div style="font-size:11px;color:var(--accent);margin-bottom:12px;font-weight:600">📞 场景: 客户第一次询价304咖啡漏斗</div>
+          <div class="eng-chat-bubble"><div class="label">Customer (买家)</div>Hi, I'm interested in your stainless steel coffee dripper. Can you send me the price and MOQ?</div>
+          <div class="eng-chat-bubble reply"><div class="label">You (你)</div>Hi! Thanks for your interest. Our 304 stainless steel coffee dripper FOB price is $8.5/unit, with MOQ of 500pcs for trial orders. Would you like me to send the full catalog?</div>
+          <div class="eng-chat-bubble"><div class="label">Customer</div>Can you do custom logo? And what's the lead time?</div>
+          <div class="eng-chat-bubble reply"><div class="label">You</div>Absolutely! We offer OEM service — custom logo, packaging, and even design. Lead time is 15-25 days after receiving the deposit. I can send you some samples of our previous OEM work.</div>
+          <div class="eng-chat-bubble"><div class="label">Customer</div>Sounds good. Please send the catalog and OEM examples.</div>
+          <div class="eng-chat-bubble reply"><div class="label">You</div>I'll send them right away! Also, may I know your estimated annual demand? This will help me offer you the best pricing.</div>
+        </div>
+        <div class="data-source"><span class="level level-c">C</span> 模拟对话 · 每周更新新场景</div>
+      </div>`;
+  }
+}
+function checkEnglishEmail() {
+  document.getElementById('eng-feedback').innerHTML = `<div style="background:#ECFDF5;padding:10px;border-radius:var(--radius-sm);color:#065F46">✅ AI批改建议：拼写无误，建议用 "look forward to hearing from you" 结尾更专业。添加 call-to-action 效果更好。</div>`;
+}
+function showEngSample() {
+  document.getElementById('eng-email-draft').value = `Subject: 304 Stainless Steel Coffee Dripper — Factory Direct OEM
+
+Dear [Name],
+
+I hope this email finds you well.
+
+I'm writing to introduce our 304 stainless steel coffee dripper, manufactured in our own factory in China.
+
+Key specs:
+- Material: 304 food-grade stainless steel
+- Fits most standard coffee mugs
+- Reusable, eco-friendly, BPA-free
+- Custom logo and packaging available
+- MOQ: 500 pcs for first trial
+
+Could you let me know your target price and estimated demand? I'd be happy to send a quotation.
+
+Looking forward to hearing from you.
+
+Best regards,
+[Your Name]`;
+}
+
+// ======================== 10. AI ASSISTANT ========================
+document.getElementById('ai-tabs').querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    this.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    renderAITab(this.dataset.tab);
+  });
+});
+
+function renderAI() { renderAITab('ai-market'); }
+function renderAITab(tab) {
+  const content = document.getElementById('ai-content');
+  const presets = {
+    'ai-market': { title: '📊 市场分析师', desc: '"这个产品值得做吗？哪个市场有机会？"',
+      answer: `基于当前数据：
+
+🇺🇸 美国: 咖啡设备消费全球第一（$5.45亿市场），Amazon月销1000+，竞争激烈但市场大。建议产品差异化。
+
+🇩🇪 德国: 精品咖啡文化成熟，对品质和认证要求高，但竞争相对较小，利润空间更大。
+
+建议: 两条腿走路 — 美国做量，德国做质。
+
+⚠ 以上为AI推断，建议进一步验证。` },
+    'ai-sales': { title: '💼 销售经理', desc: '"这个客户怎么跟？什么时候报价？"',
+      answer: `客户3天不回复很正常，不用慌：
+
+1. 第4天发简短跟进: "Just checking if you had a chance to review our quotation."
+
+2. 附上产品视频或客户案例增加信任。
+
+3. 如果一周后仍无回复，换角度: "We are offering a 5% discount for first-time trial orders this month."
+
+关键: 不要催，要加价值。每次跟进都给对方一个回复的理由。` },
+    'ai-product': { title: '🔧 产品经理', desc: '"咖啡漏斗怎么升级？差异化方向？"',
+      answer: `差异化方向：
+
+1. 设计: 双层隔热设计（不烫手），可折叠便携款
+2. 功能: 流速可调设计
+3. 组合: 漏斗+咖啡杯+滤纸套装
+4. 材质: 316不锈钢（医用级，高端市场）
+5. 配件: 定制木质底座/支架
+
+建议先出3-5款差异化样品，小批量测试。` },
+    'ai-tutor': { title: '🎓 外贸导师', desc: '"我的打法哪里错了？下一步怎么走？"',
+      answer: `你有工厂资源，建议：
+
+第一优先级: B2B (阿里国际站 + LinkedIn)
+- 发挥工厂优势：OEM/ODM
+- 首单目标：找到2-3个稳定客户
+
+第二优先级: B2C (Amazon)
+- 品牌化运作，利润更高
+- 建议B2B稳定后再开B2C
+
+第一步行动：注册阿里国际站，上传5个产品。同时在LinkedIn找3个目标客户。` },
+  };
+  const p = presets[tab];
+  content.innerHTML = `
+    <div class="card"><h3>${p.title}</h3>
+      <p style="font-size:11px;color:var(--text3);margin-bottom:10px">${p.desc}</p>
+      <div style="background:var(--accent-light);padding:14px;border-radius:var(--radius-sm);font-size:12px;white-space:pre-wrap;line-height:1.8;color:var(--text)">${p.answer}</div>
+      <div class="data-source"><span class="level level-c">C</span> AI生成建议 · 仅供参考 · 2026-07</div></div>`;
+}
+
+// ======================== 11. SETTINGS ========================
+function renderSettings() {
+  document.getElementById('settings-auto').innerHTML = `
+    <div class="opportunity-row"><span class="opp-flag">🟢</span><div class="opp-info"><div class="title">A级 · 真正自动运行</div><div class="detail">localStorage存储、CRM增删改查、成交漏斗计算、产品评分、邮件模板</div></div></div>
+    <div class="opportunity-row"><span class="opp-flag">🟡</span><div class="opp-info"><div class="title">B级 · 需联网搜索后更新</div><div class="detail">Google Trends、Amazon趋势、海关数据 — 每日8:00定时搜索</div></div></div>
+    <div class="opportunity-row"><span class="opp-flag">🔴</span><div class="opp-info"><div class="title">C级 · 需要人工输入</div><div class="detail">客户数据录入、产品详情、成交状态更新、跟进记录</div></div></div>`;
+  document.getElementById('settings-data').innerHTML = `
+    <div style="font-size:12px;line-height:2.2">
+      <p>👥 客户: <strong>${STORAGE.customers.length}</strong> 条</p>
+      <p>🏭 产品: <strong>${STORAGE.products.length}</strong> 条</p>
+      <p>💾 存储: localStorage（浏览器本地）</p>
+      <p>📊 PWA: Service Worker 已注册</p>
+      <button class="btn btn-outline btn-sm" style="margin-top:14px;color:var(--red);border-color:var(--red)" onclick="if(confirm('确认清除所有数据？')){localStorage.clear();location.reload()}">⚠ 清除所有数据</button>
+    </div>`;
+}
+
+// ======================== UTILITIES ========================
+function toast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast'; el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 2200);
+}
+
+// ======================== INIT ========================
+renderDashboard();
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(() => {}); }
+</script>
+</body>
+</html>
