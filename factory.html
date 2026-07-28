@@ -24,8 +24,6 @@
   .hero h1{font-size:32px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:8px}
   .hero h1 span{display:block;font-size:15px;font-weight:400;color:rgba(255,255,255,.6);margin-top:4px}
   .hero-desc{color:rgba(255,255,255,.75);font-size:15px;max-width:500px}
-
-  /* ===== TAGS ===== */
   .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
   .tag{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.15);padding:5px 12px;border-radius:20px;font-size:12px}
 
@@ -35,9 +33,9 @@
   .lang-btn:hover,.lang-btn.active{background:var(--gold);border-color:var(--gold);color:#fff}
 
   /* ===== SECTIONS ===== */
-  .section{padding:40px 20px;max-width:680px;margin:0 auto}
+  .section{padding:40px 20px;max-width:900px;margin:0 auto}
   .section-title{font-size:20px;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:10px}
-  .section-title .dot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
+  .section-title .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
   .section-title .sub{font-size:13px;font-weight:400;color:var(--muted);margin-left:auto}
 
   /* ===== INFO CARDS ===== */
@@ -47,14 +45,49 @@
   .info-card .value{font-size:16px;font-weight:600}
   .info-card.full{grid-column:1/-1}
 
-  /* ===== PRODUCTS ===== */
-  .prod-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
-  .prod-card .p-img{height:200px;background:#E5E7EB;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:14px}
-  .prod-card .p-body{padding:16px}
-  .prod-card .p-title{font-size:16px;font-weight:700;margin-bottom:4px}
-  .prod-card .p-sub{font-size:13px;color:var(--muted);margin-bottom:12px}
-  .prod-card .p-tags{display:flex;flex-wrap:wrap;gap:6px}
-  .prod-card .p-tag{background:var(--gold-light);color:var(--gold);font-size:12px;padding:3px 10px;border-radius:20px}
+  /* ===== GALLERY ===== */
+  .gallery-section{padding:24px 0}
+
+  /* Filter bar */
+  .filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;padding:0 20px;max-width:900px;margin-left:auto;margin-right:auto}
+  .filter-btn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 18px;border-radius:24px;font-size:13px;cursor:pointer;transition:.2s;white-space:nowrap}
+  .filter-btn:hover{border-color:var(--gold);color:var(--gold)}
+  .filter-btn.active{background:var(--gold);border-color:var(--gold);color:#fff}
+  .filter-btn .count{font-size:11px;opacity:.7;margin-left:4px}
+
+  /* Product grid */
+  .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 20px;max-width:900px;margin:0 auto}
+  .gallery-item{position:relative;border-radius:12px;overflow:hidden;background:#E5E7EB;cursor:pointer;aspect-ratio:1;transition:transform .2s, box-shadow .2s}
+  .gallery-item:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+  .gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+  .gallery-item:hover img{transform:scale(1.05)}
+  .gallery-item .item-overlay{position:absolute;bottom:0;left:0;right:0;padding:10px 12px;background:linear-gradient(transparent, rgba(0,0,0,.65));opacity:0;transition:opacity .2s}
+  .gallery-item:hover .item-overlay{opacity:1}
+  .gallery-item .item-model{color:#fff;font-size:13px;font-weight:700}
+  .gallery-item .item-badge{position:absolute;top:8px;right:8px;background:var(--gold);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+  .gallery-item .item-badge.unclassified{background:#9CA3AF}
+  .gallery-item.hidden{display:none}
+
+  /* Placeholder for unloaded images */
+  .gallery-item .placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:12px}
+
+  /* Empty state */
+  .gallery-empty{grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);font-size:15px}
+
+  /* ===== LIGHTBOX ===== */
+  .lightbox{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+  .lightbox.active{opacity:1;pointer-events:auto}
+  .lightbox-content{position:relative;max-width:90vw;max-height:85vh;display:flex;flex-direction:column;align-items:center}
+  .lightbox img{max-width:90vw;max-height:75vh;object-fit:contain;border-radius:8px}
+  .lightbox-info{padding:14px 0;text-align:center;color:#fff}
+  .lightbox-info .lb-model{font-size:18px;font-weight:700;color:var(--gold)}
+  .lightbox-info .lb-name{font-size:14px;color:rgba(255,255,255,.7);margin-top:4px}
+  .lightbox-close{position:absolute;top:16px;right:20px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;z-index:201}
+  .lightbox-close:hover{background:rgba(255,255,255,.2)}
+  .lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.1);border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;z-index:201}
+  .lightbox-nav:hover{background:rgba(255,255,255,.25)}
+  .lightbox-nav.prev{left:16px}
+  .lightbox-nav.next{right:16px}
 
   /* ===== CONTACT ===== */
   .contact-card{background:linear-gradient(135deg,var(--grad-start),var(--grad-end));border-radius:16px;padding:28px;text-align:center;margin-bottom:16px}
@@ -68,7 +101,7 @@
   /* ===== FOOTER ===== */
   .footer{text-align:center;padding:30px 20px 50px;color:var(--muted);font-size:13px}
 
-  /* ===== ENGLISH HIDE ===== */
+  /* ===== BILINGUAL ===== */
   .en{display:none}
   body.lang-en .zh{display:none}
   body.lang-en .en{display:block}
@@ -79,9 +112,23 @@
   .qr-wrap{text-align:center;padding:20px}
   .qr-wrap img{width:180px;height:180px;margin:0 auto;border:2px solid var(--border);border-radius:8px}
 
+  /* ===== HELP NOTE ===== */
+  .help-note{background:var(--gold-light);border:1px solid #FDE68A;border-radius:12px;padding:16px 18px;margin:0 20px 20px;max-width:900px;margin-left:auto;margin-right:auto;font-size:13px;color:#92400E;line-height:1.6}
+  .help-note strong{display:block;margin-bottom:4px}
+
   @media(min-width:768px){
     .hero h1{font-size:42px}
-    .section{max-width:800px;padding:50px 24px}
+    .section{max-width:900px;padding:50px 24px}
+    .gallery-grid{grid-template-columns:repeat(4,1fr);gap:12px}
+  }
+  @media(min-width:1024px){
+    .gallery-grid{grid-template-columns:repeat(5,1fr);gap:14px}
+  }
+  @media(max-width:480px){
+    .gallery-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+    .lightbox-nav{width:36px;height:36px;font-size:16px}
+    .lightbox-nav.prev{left:6px}
+    .lightbox-nav.next{right:6px}
   }
 </style>
 </head>
@@ -170,83 +217,48 @@
   </div>
 </section>
 
-<!-- PRODUCTS -->
-<section class="section">
-  <div class="section-title">
+<!-- PRODUCT GALLERY -->
+<section class="section" style="padding-bottom:12px">
+  <div class="section-title" style="padding:0">
     <div class="dot"></div>
-    <span class="zh">核心产品</span>
-    <span class="en">Core Products</span>
-    <span class="sub">PRODUCTS</span>
-  </div>
-
-  <div class="prod-card">
-    <div class="p-img">
-      <span class="zh">[产品图片占位 - 304不锈钢咖啡漏斗]</span>
-      <span class="en">[Product Image - 304 SS Coffee Dripper]</span>
-    </div>
-    <div class="p-body">
-      <div class="p-title">
-        <span class="zh">304不锈钢咖啡漏斗</span>
-        <span class="en">304 Stainless Steel Coffee Dripper</span>
-      </div>
-      <div class="p-sub">
-        <span class="zh">食品级304/316不锈钢可选，双层滤网设计，免滤纸环保方案</span>
-        <span class="en">Food-grade 304/316 SS available, double-layer filter, paperless eco-friendly design</span>
-      </div>
-      <div class="p-tags">
-        <span class="p-tag">OEM</span>
-        <span class="p-tag">ODM</span>
-        <span class="p-tag">Custom Logo</span>
-        <span class="p-tag">Laser Engraving</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="prod-card">
-    <div class="p-img">
-      <span class="zh">[产品图片占位 - 咖啡滤网/滤杯]</span>
-      <span class="en">[Product Image - Coffee Filter Mesh / Cup]</span>
-    </div>
-    <div class="p-body">
-      <div class="p-title">
-        <span class="zh">精密咖啡滤网 / V60滤杯</span>
-        <span class="en">Precision Coffee Filter Mesh / V60 Dripper</span>
-      </div>
-      <div class="p-sub">
-        <span class="zh">微米级孔径控制，均匀萃取，可定制尺寸与孔型</span>
-        <span class="en">Micron-level aperture control, even extraction, customizable size &amp; pattern</span>
-      </div>
-      <div class="p-tags">
-        <span class="p-tag">CNC Machining</span>
-        <span class="p-tag">Laser Cutting</span>
-        <span class="p-tag">Electropolishing</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="prod-card">
-    <div class="p-img">
-      <span class="zh">[产品图片占位 - 五金配件定制]</span>
-      <span class="en">[Product Image - Custom Hardware Parts]</span>
-    </div>
-    <div class="p-body">
-      <div class="p-title">
-        <span class="zh">五金冲压 / 车削定制件</span>
-        <span class="en">Metal Stamping / CNC Turned Custom Parts</span>
-      </div>
-      <div class="p-sub">
-        <span class="zh">来图来样定制，支持不锈钢/碳钢/铝合金等多种材质</span>
-        <span class="en">Drawing/sample based customization, supporting SS/carbon steel/aluminum alloy</span>
-      </div>
-      <div class="p-tags">
-        <span class="p-tag">Stamping</span>
-        <span class="p-tag">Turning</span>
-        <span class="p-tag">Milling</span>
-        <span class="p-tag">Surface Treatment</span>
-      </div>
-    </div>
+    <span class="zh">产品图库</span>
+    <span class="en">Product Gallery</span>
+    <span class="sub">48 <span class="zh">张</span><span class="en">Photos</span></span>
   </div>
 </section>
+
+<div class="help-note">
+  <strong class="zh">说明</strong><strong class="en">Note</strong>
+  <span class="zh">目前已确认 3 款产品型号（XT-010-115 咖啡漏斗、XT-029 滤筒、XT-014-102 单漏斗），其余产品标注为"待确认"。浏览图片后告诉我哪些产品应该归入哪个分类，我会立即更新。</span>
+  <span class="en">3 products confirmed (XT-010-115 dripper, XT-029 filter, XT-014-102 single dripper). Others marked "unconfirmed". Review and tell me which category each belongs to — I'll update immediately.</span>
+</div>
+
+<!-- Filter bar -->
+<div class="filter-bar" id="filterBar">
+  <button class="filter-btn active" data-cat="all">
+    <span class="zh">全部</span><span class="en">All</span>
+    <span class="count">48</span>
+  </button>
+  <button class="filter-btn" data-cat="dripper">
+    <span class="zh">咖啡漏斗</span><span class="en">Dripper</span>
+    <span class="count">2</span>
+  </button>
+  <button class="filter-btn" data-cat="filter">
+    <span class="zh">滤网/滤杯</span><span class="en">Filter</span>
+    <span class="count">1</span>
+  </button>
+  <button class="filter-btn" data-cat="hardware">
+    <span class="zh">五金定制件</span><span class="en">Hardware</span>
+    <span class="count">0</span>
+  </button>
+  <button class="filter-btn" data-cat="unclassified">
+    <span class="zh">待确认</span><span class="en">Unconfirmed</span>
+    <span class="count">45</span>
+  </button>
+</div>
+
+<!-- Gallery grid -->
+<div class="gallery-grid" id="galleryGrid"></div>
 
 <!-- PROCESS -->
 <section class="section">
@@ -366,15 +378,196 @@
   <div style="margin-top:6px">OEM / ODM | 304 / 316 Stainless Steel | Coffee Equipment | Hardware Parts | Customizable</div>
 </footer>
 
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="lightbox-nav prev" onclick="navLightbox(-1)">‹</button>
+  <button class="lightbox-nav next" onclick="navLightbox(1)">›</button>
+  <div class="lightbox-content">
+    <img src="" alt="" id="lbImg">
+    <div class="lightbox-info">
+      <div class="lb-model" id="lbModel"></div>
+      <div class="lb-name" id="lbName"></div>
+    </div>
+  </div>
+</div>
+
 <script>
+// ============ PRODUCT DATA ============
+const products = [
+  // -- CONFIRMED: Coffee Drippers --
+  { file: "0512cec2e54f98b369d1517d562d87d7.jpg", cat: "dripper", model: "XT-010-115", nameZh: "大底底盘款咖啡漏斗", nameEn: "Large Base Coffee Dripper" },
+  { file: "0b9756ea857b4b448ed9734246893ec8.jpg", cat: "dripper", model: "XT-014-102", nameZh: "单漏斗（黑色硅胶把手）", nameEn: "Single Dripper (Black Silicone Handle)" },
+
+  // -- CONFIRMED: Filter Mesh --
+  { file: "0cb1994687e650b2f3016a26cbcbdcde.jpg", cat: "filter", model: "XT-029", nameZh: "口径105席型滤筒", nameEn: "105mm Fine Mesh Filter Cylinder" },
+
+  // -- UNCLASSIFIED (needs user review) --
+  { file: "13b0ca80fcb6a335b4d5d017877878c5.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "1451cb57729ea58465ec371622182845.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "1541bce80819987e3c33fa002d9ea607.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "1549b3f428f5a29dc88bd847369f5cb9.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "19296284ba8714334adee604e2378fa0.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "2d5101650cba2affe276c8c33c8f306d.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "3231194dbc084b6391f4dde7a13a1b5a.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "379b33323ba90de474bc5a3f9ef68875.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "388cf56f77653e135ea020862c50983c.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "38e80f3b2899d77907295bec47a2a1ef.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "46f1a01e27c2250fa212a01bb7a0cf5d.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "484be84fda96bfe790fa0e4edc11e5cc.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "495ef60623c010d58b2c47effcddd200.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "49b0f125b613b9e5ea6dd9b6b915afd1.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "504abaeddbf89269035107cc7182dd75.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "50702314194af1b283a9d14ccaba017a.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "527c090690f01a47e13330aa833afa3b.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "548adc952ba57866ab6cfcfe2bee7251.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "5500f59d88b4ed7b03217d3f2c0c9208.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "61b45a4fd006738bb97f5a02fb8ba08b.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "649c650e61da026cce9b64b0b691b35a.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "64d0fcaa3eaa577525391e563cc3af2a.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "6671c3a651941df4518dff8a1a680168.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "721e835a4de3873c0b729bdf7e06c755.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "7250771ee3c750c70dcb83caae4d927e.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "73c28811427c8d97ac31fcfe4903aa0d.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "7880069b88a74dae831470f5aa64dba5.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "7a765a202dd841e808ffc0bf9635c737.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "7e9575936bec830b6bb02cb2bc9ffb26.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "8b9e77f235e0630882d9a4bf86984bb2.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "910d9715fe3d27fdd37ed3a7b4b4ede6.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "993392064f1c99edbbe20f49f7894444.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "b184419978334804906ccdd5176f939d.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "b274bd8f753a4131fcc29ecc94850722.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "b793a9434b96b91d200b102914347e16.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "c90f05b9750796e5895bb5eb6487fda9.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "d0c405c259ed2f17bbd14bdff743216d.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "e0dc9cecbaba5d2d2bbc68cccffbd1f6.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "e1156eda89a9a04970db29487467a93a.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "e56ee6cf7df391a2881316ba0d744c42.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "e6d1d02c4d569f7ece0a1e97a8197070.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "e9cc2db1f9621c3324b69ef31c37d609.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "ea19889d642bedca77d3d8ff51eab258.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "f93586d35e9da0c71ed293e5a3ac6973.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+  { file: "fddc6b6a092c1f4b6447eefc158e1c7c.jpg", cat: "unclassified", model: "待确认", nameZh: "待确认分类", nameEn: "Unclassified" },
+];
+
+const IMG_BASE = "factory/products/";
+let currentFilter = "all";
+let currentLightboxIdx = -1;
+let filteredProducts = [];
+
+// ============ RENDER GALLERY ============
+function renderGallery() {
+  const grid = document.getElementById("galleryGrid");
+  grid.innerHTML = "";
+
+  filteredProducts = currentFilter === "all"
+    ? [...products]
+    : products.filter(p => p.cat === currentFilter);
+
+  if (filteredProducts.length === 0) {
+    grid.innerHTML = `<div class="gallery-empty">
+      <span class="zh">该分类暂无产品图片</span>
+      <span class="en">No product images in this category yet</span>
+    </div>`;
+    return;
+  }
+
+  const lang = document.body.classList.contains("lang-en") ? "en" : "zh";
+
+  filteredProducts.forEach((p, idx) => {
+    const item = document.createElement("div");
+    item.className = "gallery-item";
+    item.onclick = () => openLightbox(idx);
+
+    const isClassified = p.cat !== "unclassified";
+    const badgeText = isClassified
+      ? (lang === "en" ? "Confirmed" : "已确认")
+      : (lang === "en" ? "Review" : "待确认");
+    const badgeClass = isClassified ? "" : "unclassified";
+
+    item.innerHTML = `
+      <img src="${IMG_BASE}${p.file}" alt="${p.model}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">No Image</div>
+      <div class="item-overlay">
+        <div class="item-model">${p.model}</div>
+      </div>
+      <div class="item-badge ${badgeClass}">${badgeText}</div>
+    `;
+    grid.appendChild(item);
+  });
+}
+
+// ============ FILTER ============
+function setFilter(cat) {
+  currentFilter = cat;
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  const activeBtn = document.querySelector(`.filter-btn[data-cat="${cat}"]`);
+  if (activeBtn) activeBtn.classList.add("active");
+  renderGallery();
+}
+
+document.getElementById("filterBar").addEventListener("click", (e) => {
+  const btn = e.target.closest(".filter-btn");
+  if (!btn) return;
+  setFilter(btn.dataset.cat);
+});
+
+// ============ LIGHTBOX ============
+function openLightbox(idx) {
+  currentLightboxIdx = idx;
+  updateLightbox();
+  document.getElementById("lightbox").classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeLightbox() {
+  document.getElementById("lightbox").classList.remove("active");
+  document.body.style.overflow = "";
+  currentLightboxIdx = -1;
+}
+
+function navLightbox(dir) {
+  if (filteredProducts.length === 0) return;
+  currentLightboxIdx = (currentLightboxIdx + dir + filteredProducts.length) % filteredProducts.length;
+  updateLightbox();
+}
+
+function updateLightbox() {
+  const p = filteredProducts[currentLightboxIdx];
+  if (!p) return;
+  const lang = document.body.classList.contains("lang-en") ? "en" : "zh";
+  document.getElementById("lbImg").src = IMG_BASE + p.file;
+  document.getElementById("lbModel").textContent = p.model;
+  document.getElementById("lbName").textContent = lang === "en" ? p.nameEn : p.nameZh;
+}
+
+// Keyboard nav
+document.addEventListener("keydown", (e) => {
+  const lb = document.getElementById("lightbox");
+  if (!lb.classList.contains("active")) return;
+  if (e.key === "Escape") closeLightbox();
+  if (e.key === "ArrowLeft") navLightbox(-1);
+  if (e.key === "ArrowRight") navLightbox(1);
+});
+
+// Click outside to close
+document.getElementById("lightbox").addEventListener("click", (e) => {
+  if (e.target === e.currentTarget) closeLightbox();
+});
+
+// ============ LANGUAGE ============
 function setLang(lang){
   document.body.className = lang === 'en' ? 'lang-en' : '';
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase().includes(lang)));
   localStorage.setItem('factory_lang', lang);
+  // Re-render gallery for language labels
+  renderGallery();
 }
-// Restore saved language
 const saved = localStorage.getItem('factory_lang');
 if(saved === 'en') setLang('en');
+
+// ============ INIT ============
+renderGallery();
 </script>
 </body>
 </html>
