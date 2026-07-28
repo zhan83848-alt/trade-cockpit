@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>星泰五金 | Xingtai Hardware</title>
+<meta name="description" content="星泰五金制品有限公司 - 304不锈钢咖啡漏斗、咖啡配件、五金OEM/ODM定制工厂">
+<style>
+  :root{
+    --bg:#FDFBF7;--card:#FFFFFF;--text:#1A1A2E;--muted:#6B7280;
+    --gold:#D97706;--gold-light:#FEF3C7;--border:#E5E7EB;
+    --grad-start:#FEF3C7;--grad-end:#FDE68A;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;min-height:100vh}
+  img{max-width:100%;display:block}
+
+  /* ===== HERO ===== */
+  .hero{position:relative;min-height:60vh;display:flex;flex-direction:column;justify-content:flex-end;padding:24px;background:#0A0E14;overflow:hidden}
+  .hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35}
+  .hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom, rgba(10,14,20,0) 30%, rgba(10,14,20,.9))}
+  .hero-content{position:relative;z-index:2}
+  .hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(217,119,6,.2);color:var(--gold-light);border:1px solid var(--gold);padding:4px 12px;border-radius:20px;font-size:13px;margin-bottom:16px;backdrop-filter:blur(8px)}
+  .hero h1{font-size:32px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:8px}
+  .hero h1 span{display:block;font-size:15px;font-weight:400;color:rgba(255,255,255,.6);margin-top:4px}
+  .hero-desc{color:rgba(255,255,255,.75);font-size:15px;max-width:500px}
+
+  /* ===== TAGS ===== */
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .tag{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.15);padding:5px 12px;border-radius:20px;font-size:12px}
+
+  /* ===== LANG SWITCH ===== */
+  .lang-bar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:flex-end;padding:8px 16px;gap:8px}
+  .lang-btn{background:rgba(255,255,255,.15);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);color:#fff;padding:5px 14px;border-radius:20px;font-size:12px;cursor:pointer;transition:.2s}
+  .lang-btn:hover,.lang-btn.active{background:var(--gold);border-color:var(--gold);color:#fff}
+
+  /* ===== SECTIONS ===== */
+  .section{padding:40px 20px;max-width:680px;margin:0 auto}
+  .section-title{font-size:20px;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:10px}
+  .section-title .dot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
+  .section-title .sub{font-size:13px;font-weight:400;color:var(--muted);margin-left:auto}
+
+  /* ===== INFO CARDS ===== */
+  .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .info-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
+  .info-card .label{font-size:12px;color:var(--muted);margin-bottom:4px}
+  .info-card .value{font-size:16px;font-weight:600}
+  .info-card.full{grid-column:1/-1}
+
+  /* ===== PRODUCTS ===== */
+  .prod-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+  .prod-card .p-img{height:200px;background:#E5E7EB;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:14px}
+  .prod-card .p-body{padding:16px}
+  .prod-card .p-title{font-size:16px;font-weight:700;margin-bottom:4px}
+  .prod-card .p-sub{font-size:13px;color:var(--muted);margin-bottom:12px}
+  .prod-card .p-tags{display:flex;flex-wrap:wrap;gap:6px}
+  .prod-card .p-tag{background:var(--gold-light);color:var(--gold);font-size:12px;padding:3px 10px;border-radius:20px}
+
+  /* ===== CONTACT ===== */
+  .contact-card{background:linear-gradient(135deg,var(--grad-start),var(--grad-end));border-radius:16px;padding:28px;text-align:center;margin-bottom:16px}
+  .contact-card h3{font-size:20px;font-weight:700;margin-bottom:8px}
+  .contact-card p{color:var(--muted);font-size:14px;margin-bottom:20px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#0A0E14;color:#fff;padding:14px 32px;border-radius:12px;font-size:15px;font-weight:600;text-decoration:none;width:100%;border:none;cursor:pointer;transition:.2s}
+  .btn:hover{opacity:.85}
+  .btn-wa{background:#25D366}
+  .btn-qr{background:#fff;color:var(--text);border:2px solid var(--border)}
+
+  /* ===== FOOTER ===== */
+  .footer{text-align:center;padding:30px 20px 50px;color:var(--muted);font-size:13px}
+
+  /* ===== ENGLISH HIDE ===== */
+  .en{display:none}
+  body.lang-en .zh{display:none}
+  body.lang-en .en{display:block}
+  body.lang-en .en-inline{display:inline}
+  .en-inline{display:none}
+
+  /* ===== QR CODE ===== */
+  .qr-wrap{text-align:center;padding:20px}
+  .qr-wrap img{width:180px;height:180px;margin:0 auto;border:2px solid var(--border);border-radius:8px}
+
+  @media(min-width:768px){
+    .hero h1{font-size:42px}
+    .section{max-width:800px;padding:50px 24px}
+  }
+</style>
+</head>
+<body>
+
+<!-- LANGUAGE SWITCH -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('zh')">中文</button>
+  <button class="lang-btn" onclick="setLang('en')">English</button>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <img src="https://raw.githubusercontent.com/zhan83848-alt/trade-cockpit/main/factory/factory-exterior.jpg" alt="星泰五金工厂 Xingtai Hardware Factory" onerror="this.style.display='none'">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="zh">OEM/ODM 源头工厂</span>
+      <span class="en">OEM/ODM Manufacturer</span>
+    </div>
+    <h1>
+      <span class="zh">星泰五金制品有限公司</span>
+      <span class="en">Xingtai Hardware Products Co., Ltd.</span>
+      <span class="zh">304不锈钢咖啡漏斗 &amp; 五金配件定制专家</span>
+      <span class="en">304 Stainless Steel Coffee Dripper &amp; Hardware OEM Specialist</span>
+    </h1>
+    <p class="hero-desc">
+      <span class="zh">专注不锈钢精密加工，为海内外客户提供高品质咖啡器具及五金零部件的一站式定制服务。</span>
+      <span class="en">Specialized in stainless steel precision manufacturing, providing one-stop custom solutions for coffee equipment &amp; hardware parts worldwide.</span>
+    </p>
+    <div class="tags">
+      <span class="tag zh">304不锈钢</span>
+      <span class="tag en">304 Stainless Steel</span>
+      <span class="tag zh">CNC精密加工</span>
+      <span class="tag en">CNC Precision</span>
+      <span class="tag zh">来图定制</span>
+      <span class="tag en">Custom Design</span>
+      <span class="tag zh">出口欧美</span>
+      <span class="tag en">EU/US Export</span>
+    </div>
+  </div>
+</section>
+
+<!-- FACTORY INFO -->
+<section class="section">
+  <div class="section-title">
+    <div class="dot"></div>
+    <span class="zh">工厂实力</span>
+    <span class="en">Factory Strength</span>
+    <span class="sub">FACTORY</span>
+  </div>
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="label">Company / 公司</div>
+      <div class="value">Xingtai Hardware</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Location / 地址</div>
+      <div class="value">China</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Main Material / 主材</div>
+      <div class="value">304 SS</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Business Mode / 模式</div>
+      <div class="value">OEM / ODM</div>
+    </div>
+    <div class="info-card full">
+      <div class="label">Products / 主营产品</div>
+      <div class="value">
+        <span class="zh">不锈钢咖啡漏斗、咖啡滤网、V60滤杯、法压壶配件、五金冲压件、精密车削件</span>
+        <span class="en">Stainless steel coffee dripper, filter mesh, V60 filter cup, French press parts, metal stamping, precision turned parts</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="section">
+  <div class="section-title">
+    <div class="dot"></div>
+    <span class="zh">核心产品</span>
+    <span class="en">Core Products</span>
+    <span class="sub">PRODUCTS</span>
+  </div>
+
+  <div class="prod-card">
+    <div class="p-img">
+      <span class="zh">[产品图片占位 - 304不锈钢咖啡漏斗]</span>
+      <span class="en">[Product Image - 304 SS Coffee Dripper]</span>
+    </div>
+    <div class="p-body">
+      <div class="p-title">
+        <span class="zh">304不锈钢咖啡漏斗</span>
+        <span class="en">304 Stainless Steel Coffee Dripper</span>
+      </div>
+      <div class="p-sub">
+        <span class="zh">食品级304不锈钢，双层滤网设计，免滤纸环保方案</span>
+        <span class="en">Food-grade 304 SS, double-layer filter, paperless eco-friendly design</span>
+      </div>
+      <div class="p-tags">
+        <span class="p-tag">OEM</span>
+        <span class="p-tag">ODM</span>
+        <span class="p-tag">Custom Logo</span>
+        <span class="p-tag">Laser Engraving</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="prod-card">
+    <div class="p-img">
+      <span class="zh">[产品图片占位 - 咖啡滤网/滤杯]</span>
+      <span class="en">[Product Image - Coffee Filter Mesh / Cup]</span>
+    </div>
+    <div class="p-body">
+      <div class="p-title">
+        <span class="zh">精密咖啡滤网 / V60滤杯</span>
+        <span class="en">Precision Coffee Filter Mesh / V60 Dripper</span>
+      </div>
+      <div class="p-sub">
+        <span class="zh">微米级孔径控制，均匀萃取，可定制尺寸与孔型</span>
+        <span class="en">Micron-level aperture control, even extraction, customizable size &amp; pattern</span>
+      </div>
+      <div class="p-tags">
+        <span class="p-tag">CNC Machining</span>
+        <span class="p-tag">Laser Cutting</span>
+        <span class="p-tag">Electropolishing</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="prod-card">
+    <div class="p-img">
+      <span class="zh">[产品图片占位 - 五金配件定制]</span>
+      <span class="en">[Product Image - Custom Hardware Parts]</span>
+    </div>
+    <div class="p-body">
+      <div class="p-title">
+        <span class="zh">五金冲压 / 车削定制件</span>
+        <span class="en">Metal Stamping / CNC Turned Custom Parts</span>
+      </div>
+      <div class="p-sub">
+        <span class="zh">来图来样定制，支持不锈钢/碳钢/铝合金等多种材质</span>
+        <span class="en">Drawing/sample based customization, supporting SS/carbon steel/aluminum alloy</span>
+      </div>
+      <div class="p-tags">
+        <span class="p-tag">Stamping</span>
+        <span class="p-tag">Turning</span>
+        <span class="p-tag">Milling</span>
+        <span class="p-tag">Surface Treatment</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="section">
+  <div class="section-title">
+    <div class="dot"></div>
+    <span class="zh">生产流程</span>
+    <span class="en">Production Process</span>
+    <span class="sub">PROCESS</span>
+  </div>
+  <div class="info-grid">
+    <div class="info-card"><div class="label">01</div><div class="value">
+      <span class="zh">需求沟通 / 图纸确认</span>
+      <span class="en">Inquiry &amp; Drawing Confirmation</span>
+    </div></div>
+    <div class="info-card"><div class="label">02</div><div class="value">
+      <span class="zh">模具开发 / 样品打样</span>
+      <span class="en">Mold Development &amp; Sample</span>
+    </div></div>
+    <div class="info-card"><div class="label">03</div><div class="value">
+      <span class="zh">批量生产 / QC质检</span>
+      <span class="en">Mass Production &amp; QC</span>
+    </div></div>
+    <div class="info-card"><div class="label">04</div><div class="value">
+      <span class="zh">包装出货 / 物流跟进</span>
+      <span class="en">Packaging &amp; Shipping</span>
+    </div></div>
+  </div>
+</section>
+
+<!-- CAPACITY -->
+<section class="section">
+  <div class="section-title">
+    <div class="dot"></div>
+    <span class="zh">产能与交期</span>
+    <span class="en">Capacity &amp; Lead Time</span>
+    <span class="sub">CAPACITY</span>
+  </div>
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="label">Sample / 打样</div>
+      <div class="value">7-10 Days</div>
+    </div>
+    <div class="info-card">
+      <div class="label">MOQ / 起订量</div>
+      <div class="value">500-1000 pcs</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Bulk / 大货</div>
+      <div class="value">20-30 Days</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Payment / 付款</div>
+      <div class="value">T/T, L/C</div>
+    </div>
+  </div>
+</section>
+
+<!-- QR CODE -->
+<section class="section">
+  <div class="section-title">
+    <div class="dot"></div>
+    <span class="zh">扫码收藏工厂</span>
+    <span class="en">Scan to Save</span>
+  </div>
+  <div class="qr-wrap">
+    <img src="https://raw.githubusercontent.com/zhan83848-alt/trade-cockpit/main/factory/factory-qrcode.png" alt="工厂展示页二维码" onerror="this.parentElement.innerHTML='<div style=\'padding:40px;color:#9CA3AF\'>QR Code Loading...</div>'">
+    <p style="margin-top:12px;color:var(--muted);font-size:13px">
+      <span class="zh">扫码即可收藏本页，随时查看工厂详情</span>
+      <span class="en">Scan to save this page and view factory details anytime</span>
+    </p>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section">
+  <div class="section-title">
+    <div class="dot"></div>
+    <span class="zh">联系我们</span>
+    <span class="en">Contact Us</span>
+    <span class="sub">CONTACT</span>
+  </div>
+
+  <div class="contact-card">
+    <h3>
+      <span class="zh">获取报价 / 寄送样品</span>
+      <span class="en">Get Quote / Request Sample</span>
+    </h3>
+    <p>
+      <span class="zh">发送产品需求、图纸或参考样品，我们将在24小时内回复</span>
+      <span class="en">Send your product requirements, drawings or reference samples. We'll reply within 24 hours.</span>
+    </p>
+    <a href="mailto:zhan83848-alt@github.com" class="btn">
+      <span class="zh">📧 发送询盘邮件</span>
+      <span class="en">📧 Send Inquiry Email</span>
+    </a>
+  </div>
+
+  <div class="info-grid" style="margin-top:12px">
+    <div class="info-card full" style="text-align:center">
+      <div class="label">WeChat / 微信</div>
+      <div class="value" style="font-size:18px">[您的微信号]</div>
+      <p style="font-size:12px;color:var(--muted);margin-top:4px">
+        <span class="zh">添加微信，获取产品目录与报价单</span>
+        <span class="en">Add WeChat for catalog &amp; price list</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="zh">星泰五金制品有限公司 | 专注不锈钢精密加工</div>
+  <div class="en">Xingtai Hardware Products Co., Ltd. | Precision Stainless Steel Manufacturing</div>
+  <div style="margin-top:6px">OEM / ODM | 304 Stainless Steel | Coffee Equipment | Hardware Parts</div>
+</footer>
+
+<script>
+function setLang(lang){
+  document.body.className = lang === 'en' ? 'lang-en' : '';
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase().includes(lang)));
+  localStorage.setItem('factory_lang', lang);
+}
+// Restore saved language
+const saved = localStorage.getItem('factory_lang');
+if(saved === 'en') setLang('en');
+</script>
+</body>
+</html>
